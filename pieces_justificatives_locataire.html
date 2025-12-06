@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pièces Justificatives pour Dossier de Location</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            min-height: fit-content;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #e67e22;
+            padding-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #e67e22;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #d35400;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        .section {
+            margin: 30px 0;
+            padding: 30px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            min-height: fit-content;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .section-title .icon {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .section-checkbox {
+            margin-left: 10px;
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+
+        .subsection-checkbox {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .subsection {
+            margin: 25px 0;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 0 5px 5px 0;
+            min-height: fit-content;
+        }
+
+        .subsection h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            min-height: 50px;
+        }
+
+        .subsection h3:hover {
+            background-color: #e3f2fd;
+        }
+
+        .subsection h3 .toggle-icon {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .subsection h3.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .subsection-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            padding-top: 10px;
+        }
+
+        .subsection-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+        }
+
+        .document-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .document-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            line-height: 1.5;
+        }
+
+        .document-list li:last-child {
+            border-bottom: none;
+        }
+
+        .document-list li::before {
+            content: "📄";
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .document-checkbox {
+            margin-right: 8px;
+            transform: scale(1.1);
+        }
+
+        .required {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .optional {
+            color: #27ae60;
+            font-style: italic;
+        }
+
+        .checklist {
+            background-color: #e8f5e8;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .checklist h4 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist h4::before {
+            content: "✅";
+            margin-right: 8px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 3px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .buttons {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px 0;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-height: 50px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 20px;
+            }
+            .buttons {
+                display: none;
+            }
+            .checklist-item input[type="checkbox"] {
+                -webkit-appearance: checkbox;
+            }
+            /* Cacher les sections non cochées */
+            .section.print-hidden {
+                display: none !important;
+            }
+            /* Cacher les sous-sections escamotées ou non cochées */
+            .subsection.print-hidden {
+                display: none !important;
+            }
+            .subsection-content.collapsed {
+                display: none !important;
+            }
+            /* Cacher les documents individuels non cochés */
+            .document-list li.print-hidden {
+                display: none !important;
+            }
+            /* Cacher les cases à cocher à l'impression */
+            .section-checkbox, .subsection-checkbox, .document-checkbox {
+                display: none;
+            }
+            /* Cacher les boutons dans les titres */
+            .section-title button {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            .section-title {
+                font-size: 18px;
+                flex-direction: column;
+                align-items: flex-start;
+                min-height: auto;
+                gap: 10px;
+            }
+            .subsection {
+                padding: 15px;
+            }
+            .document-list li {
+                padding: 10px 0;
+                min-height: 40px;
+                flex-wrap: wrap;
+            }
+            .buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PIÈCES JUSTIFICATIVES POUR DOSSIER DE LOCATION</h1>
+            <h2>Liste complète des documents à fournir selon votre profil</h2>
+        </div>
+
+        <div class="section" id="section-identite">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-identite" checked onchange="toggleSectionForPrint(this, 'section-identite')">
+                <span class="icon">🆔</span>
+                PIÈCES D'IDENTITÉ (OBLIGATOIRES POUR TOUS)
+            </div>
+            <ul class="document-list">
+                <li id="doc-identite-1">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-identite-1" checked onchange="toggleDocumentForPrint(this, 'doc-identite-1')">
+                    <span class="required">OBLIGATOIRE</span> - Carte nationale d'identité ou passeport en cours de validité
+                </li>
+                <li id="doc-identite-2">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-identite-2" checked onchange="toggleDocumentForPrint(this, 'doc-identite-2')">
+                    <span class="required">OBLIGATOIRE</span> - Pour les étrangers : titre de séjour en cours de validité
+                </li>
+                <li id="doc-identite-3">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-identite-3" checked onchange="toggleDocumentForPrint(this, 'doc-identite-3')">
+                    <span class="optional">RECOMMANDÉ</span> - Permis de conduire (si disponible)
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" id="section-revenus">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-revenus" checked onchange="toggleSectionForPrint(this, 'section-revenus')">
+                <span class="icon">💼</span>
+                JUSTIFICATIFS DE REVENUS
+                <button class="btn btn-info" onclick="toggleAllSubsections(this)" style="margin-left: auto; padding: 5px 10px; font-size: 12px;">
+                    📁 Tout replier
+                </button>
+            </div>
+            
+            <div class="subsection" id="subsection-cdi">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-cdi" checked onchange="toggleSubsectionForPrint(this, 'subsection-cdi')">
+                    👨‍💼 POUR LES SALARIÉS EN CDI
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-cdi-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdi-1" checked onchange="toggleDocumentForPrint(this, 'doc-cdi-1')">
+                            <span class="required">OBLIGATOIRE</span> - Contrat de travail ou attestation d'emploi
+                        </li>
+                        <li id="doc-cdi-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdi-2" checked onchange="toggleDocumentForPrint(this, 'doc-cdi-2')">
+                            <span class="required">OBLIGATOIRE</span> - 3 derniers bulletins de salaire
+                        </li>
+                        <li id="doc-cdi-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdi-3" checked onchange="toggleDocumentForPrint(this, 'doc-cdi-3')">
+                            <span class="required">OBLIGATOIRE</span> - Dernier avis d'imposition ou de non-imposition
+                        </li>
+                        <li id="doc-cdi-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdi-4" checked onchange="toggleDocumentForPrint(this, 'doc-cdi-4')">
+                            <span class="optional">RECOMMANDÉ</span> - Attestation de l'employeur précisant la nature du contrat et le salaire
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-cdd">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-cdd" checked onchange="toggleSubsectionForPrint(this, 'subsection-cdd')">
+                    📝 POUR LES SALARIÉS EN CDD/INTERIM
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-cdd-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdd-1" checked onchange="toggleDocumentForPrint(this, 'doc-cdd-1')">
+                            <span class="required">OBLIGATOIRE</span> - Contrat de travail en cours
+                        </li>
+                        <li id="doc-cdd-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdd-2" checked onchange="toggleDocumentForPrint(this, 'doc-cdd-2')">
+                            <span class="required">OBLIGATOIRE</span> - 3 derniers bulletins de salaire
+                        </li>
+                        <li id="doc-cdd-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdd-3" checked onchange="toggleDocumentForPrint(this, 'doc-cdd-3')">
+                            <span class="required">OBLIGATOIRE</span> - Dernier avis d'imposition ou de non-imposition
+                        </li>
+                        <li id="doc-cdd-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdd-4" checked onchange="toggleDocumentForPrint(this, 'doc-cdd-4')">
+                            <span class="required">OBLIGATOIRE</span> - Attestation Pôle Emploi (si applicable)
+                        </li>
+                        <li id="doc-cdd-5">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-cdd-5" checked onchange="toggleDocumentForPrint(this, 'doc-cdd-5')">
+                            <span class="optional">RECOMMANDÉ</span> - Justificatifs des 6 derniers mois d'activité
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-independant">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-independant" checked onchange="toggleSubsectionForPrint(this, 'subsection-independant')">
+                    🏢 POUR LES TRAVAILLEURS INDÉPENDANTS/PROFESSIONS LIBÉRALES
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-independant-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-independant-1" checked onchange="toggleDocumentForPrint(this, 'doc-independant-1')">
+                            <span class="required">OBLIGATOIRE</span> - Extrait K-bis (moins de 3 mois) ou carte professionnelle
+                        </li>
+                        <li id="doc-independant-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-independant-2" checked onchange="toggleDocumentForPrint(this, 'doc-independant-2')">
+                            <span class="required">OBLIGATOIRE</span> - 2 derniers avis d'imposition
+                        </li>
+                        <li id="doc-independant-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-independant-3" checked onchange="toggleDocumentForPrint(this, 'doc-independant-3')">
+                            <span class="required">OBLIGATOIRE</span> - Attestation comptable des revenus ou bilan comptable
+                        </li>
+                        <li id="doc-independant-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-independant-4" checked onchange="toggleDocumentForPrint(this, 'doc-independant-4')">
+                            <span class="optional">RECOMMANDÉ</span> - Relevés bancaires des 3 derniers mois
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-etudiant">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-etudiant" checked onchange="toggleSubsectionForPrint(this, 'subsection-etudiant')">
+                    🎓 POUR LES ÉTUDIANTS
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-etudiant-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-etudiant-1" checked onchange="toggleDocumentForPrint(this, 'doc-etudiant-1')">
+                            <span class="required">OBLIGATOIRE</span> - Certificat de scolarité ou carte étudiante
+                        </li>
+                        <li id="doc-etudiant-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-etudiant-2" checked onchange="toggleDocumentForPrint(this, 'doc-etudiant-2')">
+                            <span class="required">OBLIGATOIRE</span> - Justificatifs de ressources (bourse, aide familiale, job étudiant)
+                        </li>
+                        <li id="doc-etudiant-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-etudiant-3" checked onchange="toggleDocumentForPrint(this, 'doc-etudiant-3')">
+                            <span class="required">OBLIGATOIRE</span> - Avis d'imposition des parents ou du responsable légal
+                        </li>
+                        <li id="doc-etudiant-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-etudiant-4" checked onchange="toggleDocumentForPrint(this, 'doc-etudiant-4')">
+                            <span class="optional">RECOMMANDÉ</span> - Relevés bancaires des 3 derniers mois
+                        </li>
+                        <li id="doc-etudiant-5">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-etudiant-5" checked onchange="toggleDocumentForPrint(this, 'doc-etudiant-5')">
+                            <span class="optional">RECOMMANDÉ</span> - Attestation de stage ou contrat d'apprentissage (si applicable)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-retraite">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-retraite" checked onchange="toggleSubsectionForPrint(this, 'subsection-retraite')">
+                    👴 POUR LES RETRAITÉS
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-retraite-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-retraite-1" checked onchange="toggleDocumentForPrint(this, 'doc-retraite-1')">
+                            <span class="required">OBLIGATOIRE</span> - Titre de pension de retraite
+                        </li>
+                        <li id="doc-retraite-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-retraite-2" checked onchange="toggleDocumentForPrint(this, 'doc-retraite-2')">
+                            <span class="required">OBLIGATOIRE</span> - 3 derniers relevés de pension
+                        </li>
+                        <li id="doc-retraite-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-retraite-3" checked onchange="toggleDocumentForPrint(this, 'doc-retraite-3')">
+                            <span class="required">OBLIGATOIRE</span> - Dernier avis d'imposition ou de non-imposition
+                        </li>
+                        <li id="doc-retraite-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-retraite-4" checked onchange="toggleDocumentForPrint(this, 'doc-retraite-4')">
+                            <span class="optional">RECOMMANDÉ</span> - Relevés bancaires des 3 derniers mois
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-fonction-publique">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-fonction-publique" checked onchange="toggleSubsectionForPrint(this, 'subsection-fonction-publique')">
+                    🏛️ POUR LES AGENTS DE LA FONCTION PUBLIQUE
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-fonction-publique-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-fonction-publique-1" checked onchange="toggleDocumentForPrint(this, 'doc-fonction-publique-1')">
+                            <span class="required">OBLIGATOIRE</span> - Attestation d'emploi ou arrêté de nomination
+                        </li>
+                        <li id="doc-fonction-publique-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-fonction-publique-2" checked onchange="toggleDocumentForPrint(this, 'doc-fonction-publique-2')">
+                            <span class="required">OBLIGATOIRE</span> - 3 derniers bulletins de salaire
+                        </li>
+                        <li id="doc-fonction-publique-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-fonction-publique-3" checked onchange="toggleDocumentForPrint(this, 'doc-fonction-publique-3')">
+                            <span class="required">OBLIGATOIRE</span> - Dernier avis d'imposition ou de non-imposition
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="section-domicile">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-domicile" checked onchange="toggleSectionForPrint(this, 'section-domicile')">
+                <span class="icon">🏠</span>
+                JUSTIFICATIFS DE DOMICILE
+            </div>
+            <ul class="document-list">
+                <li id="doc-domicile-1">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-domicile-1" checked onchange="toggleDocumentForPrint(this, 'doc-domicile-1')">
+                    <span class="required">OBLIGATOIRE</span> - Quittance de loyer ou titre de propriété du logement actuel
+                </li>
+                <li id="doc-domicile-2">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-domicile-2" checked onchange="toggleDocumentForPrint(this, 'doc-domicile-2')">
+                    <span class="optional">OU</span> - Attestation d'hébergement + justificatif de domicile de l'hébergeant
+                </li>
+                <li id="doc-domicile-3">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-domicile-3" checked onchange="toggleDocumentForPrint(this, 'doc-domicile-3')">
+                    <span class="optional">OU</span> - Facture EDF, gaz, téléphone (moins de 3 mois)
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" id="section-garanties">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-garanties" checked onchange="toggleSectionForPrint(this, 'section-garanties')">
+                <span class="icon">🛡️</span>
+                GARANTIES ET CAUTIONS
+                <button class="btn btn-info" onclick="toggleAllSubsections(this)" style="margin-left: auto; padding: 5px 10px; font-size: 12px;">
+                    📁 Tout replier
+                </button>
+            </div>
+            
+            <div class="subsection" id="subsection-caution-physique">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-caution-physique" checked onchange="toggleSubsectionForPrint(this, 'subsection-caution-physique')">
+                    👥 POUR LA CAUTION PHYSIQUE
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-caution-physique-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-caution-physique-1" checked onchange="toggleDocumentForPrint(this, 'doc-caution-physique-1')">
+                            <span class="required">OBLIGATOIRE</span> - Pièce d'identité de la caution
+                        </li>
+                        <li id="doc-caution-physique-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-caution-physique-2" checked onchange="toggleDocumentForPrint(this, 'doc-caution-physique-2')">
+                            <span class="required">OBLIGATOIRE</span> - Justificatifs de revenus de la caution (mêmes exigences que le locataire)
+                        </li>
+                        <li id="doc-caution-physique-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-caution-physique-3" checked onchange="toggleDocumentForPrint(this, 'doc-caution-physique-3')">
+                            <span class="required">OBLIGATOIRE</span> - Attestation de domicile de la caution
+                        </li>
+                        <li id="doc-caution-physique-4">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-caution-physique-4" checked onchange="toggleDocumentForPrint(this, 'doc-caution-physique-4')">
+                            <span class="required">OBLIGATOIRE</span> - Acte de cautionnement signé
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection" id="subsection-garanties-alternatives">
+                <h3 onclick="toggleSubsection(this)">
+                    <input type="checkbox" class="subsection-checkbox" id="check-garanties-alternatives" checked onchange="toggleSubsectionForPrint(this, 'subsection-garanties-alternatives')">
+                    🏢 GARANTIES ALTERNATIVES
+                    <span class="toggle-icon">🔽</span>
+                </h3>
+                <div class="subsection-content">
+                    <ul class="document-list">
+                        <li id="doc-garanties-alternatives-1">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-garanties-alternatives-1" checked onchange="toggleDocumentForPrint(this, 'doc-garanties-alternatives-1')">
+                            <span class="optional">POSSIBLE</span> - Contrat Visale (Action Logement)
+                        </li>
+                        <li id="doc-garanties-alternatives-2">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-garanties-alternatives-2" checked onchange="toggleDocumentForPrint(this, 'doc-garanties-alternatives-2')">
+                            <span class="optional">POSSIBLE</span> - Garantie bancaire
+                        </li>
+                        <li id="doc-garanties-alternatives-3">
+                            <input type="checkbox" class="document-checkbox" id="check-doc-garanties-alternatives-3" checked onchange="toggleDocumentForPrint(this, 'doc-garanties-alternatives-3')">
+                            <span class="optional">POSSIBLE</span> - Assurance loyers impayés
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="section-bancaire">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-bancaire" checked onchange="toggleSectionForPrint(this, 'section-bancaire')">
+                <span class="icon">💳</span>
+                JUSTIFICATIFS BANCAIRES
+            </div>
+            <ul class="document-list">
+                <li id="doc-bancaire-1">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-bancaire-1" checked onchange="toggleDocumentForPrint(this, 'doc-bancaire-1')">
+                    <span class="required">OBLIGATOIRE</span> - RIB (Relevé d'Identité Bancaire)
+                </li>
+                <li id="doc-bancaire-2">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-bancaire-2" checked onchange="toggleDocumentForPrint(this, 'doc-bancaire-2')">
+                    <span class="required">OBLIGATOIRE</span> - 3 derniers relevés de compte bancaire
+                </li>
+                <li id="doc-bancaire-3">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-bancaire-3" checked onchange="toggleDocumentForPrint(this, 'doc-bancaire-3')">
+                    <span class="optional">RECOMMANDÉ</span> - Attestation bancaire précisant les revenus
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" id="section-administratif">
+            <div class="section-title">
+                <input type="checkbox" class="section-checkbox" id="check-administratif" checked onchange="toggleSectionForPrint(this, 'section-administratif')">
+                <span class="icon">📋</span>
+                DOCUMENTS ADMINISTRATIFS COMPLÉMENTAIRES
+            </div>
+            <ul class="document-list">
+                <li id="doc-administratif-1">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-administratif-1" checked onchange="toggleDocumentForPrint(this, 'doc-administratif-1')">
+                    <span class="optional">SI APPLICABLE</span> - Attestation d'assurance habitation
+                </li>
+                <li id="doc-administratif-2">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-administratif-2" checked onchange="toggleDocumentForPrint(this, 'doc-administratif-2')">
+                    <span class="optional">SI APPLICABLE</span> - Autorisation du conjoint (si marié sous régime de communauté)
+                </li>
+                <li id="doc-administratif-3">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-administratif-3" checked onchange="toggleDocumentForPrint(this, 'doc-administratif-3')">
+                    <span class="optional">SI APPLICABLE</span> - Jugement de divorce avec dispositions sur le logement
+                </li>
+                <li id="doc-administratif-4">
+                    <input type="checkbox" class="document-checkbox" id="check-doc-administratif-4" checked onchange="toggleDocumentForPrint(this, 'doc-administratif-4')">
+                    <span class="optional">SI DEMANDÉ</span> - Certificat médical (pour certains logements adaptés)
+                </li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-success" onclick="selectAllSections()">✅ Tout sélectionner</button>
+            <button class="btn btn-primary" onclick="deselectAllSections()">❌ Tout désélectionner</button>
+            <button class="btn btn-info" onclick="selectOnlyRelevant()">🎯 Sélection intelligente</button>
+            <button class="btn btn-primary" onclick="selectOnlyRequired()">🔴 Documents obligatoires seulement</button>
+        </div>
+
+        <div class="buttons" style="margin-top: 20px;">
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer cette liste</button>
+            <button class="btn btn-primary" onclick="downloadAsPDF()">📄 Télécharger en PDF</button>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour basculer l'état d'une sous-section
+        function toggleSubsection(headerElement) {
+            const content = headerElement.nextElementSibling;
+            const icon = headerElement.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                // Ouvrir la section
+                content.classList.remove('collapsed');
+                content.style.maxHeight = (content.scrollHeight + 50) + "px";
+                headerElement.classList.remove('collapsed');
+                icon.textContent = '🔽';
+            } else {
+                // Fermer la section
+                content.style.maxHeight = "0px";
+                content.classList.add('collapsed');
+                headerElement.classList.add('collapsed');
+                icon.textContent = '▶️';
+            }
+            
+            saveSubsectionStates();
+        }
+
+        // Fonction pour tout ouvrir/fermer dans une section
+        function toggleAllSubsections(buttonElement) {
+            const section = buttonElement.closest('.section');
+            const subsections = section.querySelectorAll('.subsection');
+            const isCollapsing = buttonElement.textContent.includes('replier');
+            
+            subsections.forEach(subsection => {
+                const header = subsection.querySelector('h3');
+                const content = subsection.querySelector('.subsection-content');
+                const icon = header.querySelector('.toggle-icon');
+                
+                if (isCollapsing) {
+                    // Replier tout
+                    content.style.maxHeight = "0px";
+                    content.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                    icon.textContent = '▶️';
+                } else {
+                    // Déplier tout
+                    content.classList.remove('collapsed');
+                    content.style.maxHeight = (content.scrollHeight + 50) + "px";
+                    header.classList.remove('collapsed');
+                    icon.textContent = '🔽';
+                }
+            });
+            
+            // Changer le texte du bouton
+            if (isCollapsing) {
+                buttonElement.innerHTML = '📂 Tout déplier';
+            } else {
+                buttonElement.innerHTML = '📁 Tout replier';
+            }
+            
+            saveSubsectionStates();
+        }
+
+        // Fonction pour gérer l'impression des sections
+        function toggleSectionForPrint(checkbox, sectionId) {
+            const section = document.getElementById(sectionId);
+            if (checkbox.checked) {
+                section.classList.remove('print-hidden');
+            } else {
+                section.classList.add('print-hidden');
+            }
+            saveSelectionStates();
+        }
+
+        // Fonction pour gérer l'impression des sous-sections
+        function toggleSubsectionForPrint(checkbox, subsectionId) {
+            const subsection = document.getElementById(subsectionId);
+            if (checkbox.checked) {
+                subsection.classList.remove('print-hidden');
+            } else {
+                subsection.classList.add('print-hidden');
+            }
+            saveSelectionStates();
+        }
+
+        // Fonction pour gérer l'impression des documents individuels
+        function toggleDocumentForPrint(checkbox, documentId) {
+            const documentElement = document.getElementById(documentId);
+            if (checkbox.checked) {
+                documentElement.classList.remove('print-hidden');
+            } else {
+                documentElement.classList.add('print-hidden');
+            }
+            saveSelectionStates();
+        }
+
+        // Fonction pour sélectionner toutes les sections
+        function selectAllSections() {
+            document.querySelectorAll('.section-checkbox, .subsection-checkbox, .document-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+                const event = new Event('change');
+                checkbox.dispatchEvent(event);
+            });
+        }
+
+        // Fonction pour désélectionner toutes les sections
+        function deselectAllSections() {
+            document.querySelectorAll('.section-checkbox, .subsection-checkbox, .document-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                const event = new Event('change');
+                checkbox.dispatchEvent(event);
+            });
+        }
+
+        // Fonction pour une sélection intelligente (garde les essentiels)
+        function selectOnlyRelevant() {
+            // Désélectionner tout d'abord
+            deselectAllSections();
+            
+            // Sélectionner les sections essentielles
+            const essentialIds = ['check-identite', 'check-domicile', 'check-bancaire'];
+            essentialIds.forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                }
+            });
+
+            // Sélectionner les documents essentiels dans les sections cochées
+            const essentialDocs = [
+                'check-doc-identite-1', 'check-doc-identite-2', // CNI et titre de séjour
+                'check-doc-domicile-1', // Quittance de loyer
+                'check-doc-bancaire-1', 'check-doc-bancaire-2' // RIB et relevés
+            ];
+            essentialDocs.forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                }
+            });
+        }
+
+        // Fonction pour sélectionner uniquement les documents obligatoires
+        function selectOnlyRequired() {
+            // Désélectionner tout d'abord
+            deselectAllSections();
+            
+            // Parcourir tous les documents et ne sélectionner que ceux marqués "OBLIGATOIRE"
+            document.querySelectorAll('.document-list li').forEach(listItem => {
+                const requiredSpan = listItem.querySelector('.required');
+                if (requiredSpan && requiredSpan.textContent === 'OBLIGATOIRE') {
+                    const checkbox = listItem.querySelector('.document-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        const event = new Event('change');
+                        checkbox.dispatchEvent(event);
+                        
+                        // Cocher aussi la sous-section et section parente
+                        const subsection = listItem.closest('.subsection');
+                        if (subsection) {
+                            const subsectionCheckbox = subsection.querySelector('.subsection-checkbox');
+                            if (subsectionCheckbox) {
+                                subsectionCheckbox.checked = true;
+                                const subsectionEvent = new Event('change');
+                                subsectionCheckbox.dispatchEvent(subsectionEvent);
+                            }
+                        }
+                        
+                        const section = listItem.closest('.section');
+                        if (section) {
+                            const sectionCheckbox = section.querySelector('.section-checkbox');
+                            if (sectionCheckbox) {
+                                sectionCheckbox.checked = true;
+                                const sectionEvent = new Event('change');
+                                sectionCheckbox.dispatchEvent(sectionEvent);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fonction pour préparer l'impression
+        function prepareForPrint() {
+            // Appliquer les classes print-hidden avant l'impression
+            document.querySelectorAll('.section').forEach(section => {
+                const checkbox = section.querySelector('.section-checkbox');
+                if (checkbox && !checkbox.checked) {
+                    section.classList.add('print-hidden');
+                }
+            });
+
+            document.querySelectorAll('.subsection').forEach(subsection => {
+                const checkbox = subsection.querySelector('.subsection-checkbox');
+                if (checkbox && !checkbox.checked) {
+                    subsection.classList.add('print-hidden');
+                }
+            });
+
+            document.querySelectorAll('.document-list li').forEach(documentItem => {
+                const checkbox = documentItem.querySelector('.document-checkbox');
+                if (checkbox && !checkbox.checked) {
+                    documentItem.classList.add('print-hidden');
+                }
+            });
+        }
+
+        // Surcharger la fonction d'impression
+        const originalPrint = window.print;
+        window.print = function() {
+            prepareForPrint();
+            originalPrint.call(window);
+        };
+
+        // Fonction pour sauvegarder l'état des sélections
+        function saveSelectionStates() {
+            const states = {};
+            document.querySelectorAll('.section-checkbox, .subsection-checkbox, .document-checkbox').forEach(checkbox => {
+                states[checkbox.id] = checkbox.checked;
+            });
+            localStorage.setItem('selectionStates', JSON.stringify(states));
+        }
+
+        // Fonction pour charger l'état des sélections
+        function loadSelectionStates() {
+            const savedStates = localStorage.getItem('selectionStates');
+            if (savedStates) {
+                const states = JSON.parse(savedStates);
+                Object.keys(states).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = states[id];
+                        const event = new Event('change');
+                        checkbox.dispatchEvent(event);
+                    }
+                });
+            }
+        }
+
+        // Fonction pour sauvegarder l'état des sous-sections
+        function saveSubsectionStates() {
+            const states = {};
+            document.querySelectorAll('.subsection h3').forEach((header, index) => {
+                states[index] = !header.classList.contains('collapsed');
+            });
+            localStorage.setItem('subsectionStates', JSON.stringify(states));
+        }
+
+        // Fonction pour charger l'état des sous-sections
+        function loadSubsectionStates() {
+            const savedStates = localStorage.getItem('subsectionStates');
+            if (savedStates) {
+                const states = JSON.parse(savedStates);
+                document.querySelectorAll('.subsection h3').forEach((header, index) => {
+                    if (states[index] === false) {
+                        // Cette section était fermée
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.toggle-icon');
+                        
+                        content.style.maxHeight = "0px";
+                        content.classList.add('collapsed');
+                        header.classList.add('collapsed');
+                        icon.textContent = '▶️';
+                    }
+                });
+            }
+        }
+
+        // Fonction pour initialiser les hauteurs max des contenus
+        function initializeContentHeights() {
+            document.querySelectorAll('.subsection-content').forEach(content => {
+                if (!content.classList.contains('collapsed')) {
+                    // Ajouter une marge de sécurité pour éviter que le contenu soit coupé
+                    content.style.maxHeight = (content.scrollHeight + 50) + "px";
+                }
+            });
+        }
+
+        // Fonction pour sauvegarder l'état des cases cochées
+        function saveChecklistState() {
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const state = {};
+            checkboxes.forEach(checkbox => {
+                state[checkbox.id] = checkbox.checked;
+            });
+            localStorage.setItem('checklistState', JSON.stringify(state));
+        }
+
+        // Fonction pour charger l'état des cases cochées
+        function loadChecklistState() {
+            const savedState = localStorage.getItem('checklistState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                Object.keys(state).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = state[id];
+                    }
+                });
+            }
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeContentHeights();
+            loadSubsectionStates();
+            loadChecklistState();
+            loadSelectionStates();
+            
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', saveChecklistState);
+            });
+
+            // Gestion du redimensionnement de fenêtre
+            window.addEventListener('resize', initializeContentHeights);
+        });
+
+        // Fonction pour télécharger en PDF (simulation)
+        function downloadAsPDF() {
+            prepareForPrint();
+            alert('Utilisez la fonction "Imprimer" de votre navigateur et sélectionnez "Enregistrer au format PDF" comme destination.');
+            window.print();
+        }
+
+        // Fonction pour réinitialiser la checklist
+        function resetChecklist() {
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            localStorage.removeItem('checklistState');
+        }
+    </script>
+</body>
+</html>

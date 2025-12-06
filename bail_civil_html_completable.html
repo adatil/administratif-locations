@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Bail Civil - Résidence Secondaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #34495e;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .header h3 {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 10px;
+            min-width: 150px;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            min-width: auto;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            min-width: auto;
+            width: auto;
+        }
+
+        .amount-input {
+            width: 150px !important;
+            text-align: right;
+        }
+
+        .calculated {
+            background-color: #e8f6f3 !important;
+            font-weight: bold;
+        }
+
+        .preneur-block {
+            border: 2px solid #e8f4f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8fdff;
+        }
+
+        .preneur-block h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        .important-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .important-notice h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .important-notice ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 45%;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 50px 0 10px 0;
+            height: 50px;
+        }
+
+        .preview-mode {
+            display: none;
+        }
+
+        .preview-mode.active {
+            display: block;
+        }
+
+        .edit-mode.hidden {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 20px;
+            }
+            .buttons {
+                display: none;
+            }
+            .form-group input, 
+            .form-group textarea, 
+            .form-group select {
+                border: none;
+                border-bottom: 1px solid #333;
+                background: transparent;
+                padding: 2px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CONTRAT DE BAIL DE LOCATION MEUBLÉE</h1>
+            <h2>À TITRE DE RÉSIDENCE SECONDAIRE</h2>
+            <h3>(Articles 1708 et suivants du Code civil)</h3>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">LE BAILLEUR</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom et prénom :</label>
+                        <input type="text" id="bailleur_nom" placeholder="NOM Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Né(e) le :</label>
+                        <input type="date" id="bailleur_naissance">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lieu de naissance :</label>
+                    <input type="text" id="bailleur_lieu_naissance" placeholder="Ville">
+                </div>
+                <div class="form-group">
+                    <label>Domicilié(e) :</label>
+                    <textarea id="bailleur_adresse" placeholder="Adresse complète"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone :</label>
+                        <input type="tel" id="bailleur_tel" placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" id="bailleur_email" placeholder="email@exemple.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LE(S) PRENEUR(S)</div>
+                <div id="preneurs-container">
+                    <div class="preneur-block" data-preneur="1">
+                        <h4>Preneur 1</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom et prénom :</label>
+                                <input type="text" id="preneur1_nom" placeholder="NOM Prénom">
+                            </div>
+                            <div class="form-group">
+                                <label>Né(e) le :</label>
+                                <input type="date" id="preneur1_naissance">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu de naissance :</label>
+                            <input type="text" id="preneur1_lieu_naissance" placeholder="Ville">
+                        </div>
+                        <div class="form-group">
+                            <label>Résidence PRINCIPALE :</label>
+                            <textarea id="preneur1_adresse_principale" placeholder="Adresse complète de la résidence principale"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Téléphone :</label>
+                                <input type="tel" id="preneur1_tel" placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group">
+                                <label>Email :</label>
+                                <input type="email" id="preneur1_email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Profession :</label>
+                            <input type="text" id="preneur1_profession" placeholder="Profession">
+                        </div>
+                    </div>
+                </div>
+                <div class="buttons" style="margin-top: 15px;">
+                    <button class="btn btn-info" type="button" onclick="addPreneur()">➕ Ajouter un preneur</button>
+                    <button class="btn btn-primary" type="button" onclick="removePreneur()" id="removeBtn" style="display:none;">➖ Supprimer le dernier preneur</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DÉSIGNATION DU LOGEMENT</div>
+                <div class="form-group">
+                    <label>Adresse :</label>
+                    <textarea id="logement_adresse" placeholder="Adresse complète du logement"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Code postal :</label>
+                        <input type="text" id="logement_cp" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville :</label>
+                        <input type="text" id="logement_ville" placeholder="Paris">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type de logement :</label>
+                        <select id="logement_type">
+                            <option value="">Sélectionner</option>
+                            <option value="Studio">Studio</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="Maison">Maison</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Surface habitable :</label>
+                        <input type="number" id="logement_surface" placeholder="m²" class="amount-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dépendances :</label>
+                    <input type="text" id="logement_dependances" placeholder="Cave, garage, parking, jardin...">
+                </div>
+                <div class="form-group">
+                    <label>Équipements :</label>
+                    <textarea id="logement_equipements" placeholder="Chauffage, climatisation, piscine, internet..."></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DURÉE DU BAIL</div>
+                <div class="form-group">
+                    <label>Type de bail :</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="duree_type" value="determine"> À durée déterminée</label>
+                        <label><input type="radio" name="duree_type" value="reconductible"> Reconductible</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Durée :</label>
+                        <select id="duree_bail">
+                            <option value="1 an">1 an</option>
+                            <option value="2 ans">2 ans</option>
+                            <option value="3 ans">3 ans</option>
+                            <option value="6 mois">6 mois</option>
+                            <option value="18 mois">18 mois</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date de début :</label>
+                        <input type="date" id="date_debut">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Date de fin :</label>
+                    <input type="date" id="date_fin">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOYER ET CHARGES</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Loyer mensuel :</label>
+                        <input type="number" id="loyer_mensuel" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Charges forfaitaires :</label>
+                        <input type="number" id="charges" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Charges incluses :</label>
+                    <textarea id="charges_detail" placeholder="Eau, électricité, gaz, internet, ordures ménagères..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Loyer total mensuel :</label>
+                    <input type="number" id="loyer_total" placeholder="€" class="amount-input calculated" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Mode de paiement :</label>
+                    <select id="mode_paiement">
+                        <option value="virement bancaire">Virement bancaire</option>
+                        <option value="chèque">Chèque</option>
+                        <option value="prélèvement automatique">Prélèvement automatique</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jour de paiement :</label>
+                    <select id="jour_paiement">
+                        <option value="1">1er du mois</option>
+                        <option value="5">5 du mois</option>
+                        <option value="10">10 du mois</option>
+                        <option value="15">15 du mois</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DÉPÔT DE GARANTIE</div>
+                <div class="form-group">
+                    <label>Montant :</label>
+                    <input type="number" id="depot_garantie" placeholder="€" class="amount-input" step="0.01">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">RÉSILIATION</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Préavis par le preneur :</label>
+                        <select id="preavis_preneur">
+                            <option value="1 mois">1 mois</option>
+                            <option value="2 mois">2 mois</option>
+                            <option value="3 mois">3 mois</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Préavis par le bailleur :</label>
+                        <select id="preavis_bailleur">
+                            <option value="3 mois">3 mois</option>
+                            <option value="6 mois">6 mois</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">SOUS-LOCATION</div>
+                <div class="form-group">
+                    <label>Sous-location :</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="sous_location" value="interdite"> Interdite</label>
+                        <label><input type="radio" name="sous_location" value="autorisee"> Autorisée sous conditions</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">CLAUSES PARTICULIÈRES</div>
+                <div class="form-group">
+                    <label>Animaux :</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="animaux" value="interdits"> Interdits</label>
+                        <label><input type="radio" name="animaux" value="autorises"> Autorisés</label>
+                        <label><input type="radio" name="animaux" value="autorises_conditions"> Autorisés sous conditions</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Autres clauses :</label>
+                    <textarea id="clauses_particulieres" placeholder="Ajoutez ici toute clause particulière..."></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">SIGNATURE</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Lieu de signature :</label>
+                        <input type="text" id="lieu_signature" placeholder="Ville">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de signature :</label>
+                        <input type="date" id="date_signature">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-mode" id="preview">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+
+        <div class="important-notice">
+            <h4>⚠️ MENTIONS LÉGALES IMPORTANTES</h4>
+            <ul>
+                <li>Ce logement ne peut constituer la résidence principale du locataire</li>
+                <li>Aucune aide au logement (APL/ALS) ne peut être perçue</li>
+                <li>La taxe d'habitation reste à charge du locataire</li>
+                <li>Le présent contrat est régi par le Code civil et non par la loi du 6 juillet 1989</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="previewBail()">📄 Aperçu du bail</button>
+            <button class="btn btn-info" onclick="editBail()" style="display:none;" id="editBtn">✏️ Modifier</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="btn btn-primary" onclick="saveBail()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadBail()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        let preneurCount = 1;
+
+        function addPreneur() {
+            preneurCount++;
+            const container = document.getElementById('preneurs-container');
+            const newPreneur = document.createElement('div');
+            newPreneur.className = 'preneur-block';
+            newPreneur.setAttribute('data-preneur', preneurCount);
+            
+            newPreneur.innerHTML = `
+                <h4>Preneur ${preneurCount}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom et prénom :</label>
+                        <input type="text" id="preneur${preneurCount}_nom" placeholder="NOM Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Né(e) le :</label>
+                        <input type="date" id="preneur${preneurCount}_naissance">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lieu de naissance :</label>
+                    <input type="text" id="preneur${preneurCount}_lieu_naissance" placeholder="Ville">
+                </div>
+                <div class="form-group">
+                    <label>Résidence PRINCIPALE :</label>
+                    <textarea id="preneur${preneurCount}_adresse_principale" placeholder="Adresse complète de la résidence principale"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone :</label>
+                        <input type="tel" id="preneur${preneurCount}_tel" placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" id="preneur${preneurCount}_email" placeholder="email@exemple.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Profession :</label>
+                    <input type="text" id="preneur${preneurCount}_profession" placeholder="Profession">
+                </div>
+            `;
+            
+            container.appendChild(newPreneur);
+            document.getElementById('removeBtn').style.display = 'inline-block';
+        }
+
+        function removePreneur() {
+            if (preneurCount > 1) {
+                const container = document.getElementById('preneurs-container');
+                const lastPreneur = container.querySelector(`[data-preneur="${preneurCount}"]`);
+                if (lastPreneur) {
+                    container.removeChild(lastPreneur);
+                    preneurCount--;
+                }
+            }
+            
+            if (preneurCount <= 1) {
+                document.getElementById('removeBtn').style.display = 'none';
+            }
+        }
+
+        // Calcul automatique du loyer total
+        function calculateTotal() {
+            const loyer = parseFloat(document.getElementById('loyer_mensuel').value) || 0;
+            const charges = parseFloat(document.getElementById('charges').value) || 0;
+            document.getElementById('loyer_total').value = (loyer + charges).toFixed(2);
+        }
+
+        document.getElementById('loyer_mensuel').addEventListener('input', calculateTotal);
+        document.getElementById('charges').addEventListener('input', calculateTotal);
+
+        // Calcul automatique de la date de fin
+        function calculateEndDate() {
+            const startDate = document.getElementById('date_debut').value;
+            const duration = document.getElementById('duree_bail').value;
+            
+            if (startDate && duration) {
+                const start = new Date(startDate);
+                let end = new Date(start);
+                
+                if (duration.includes('an')) {
+                    const years = parseInt(duration);
+                    end.setFullYear(start.getFullYear() + years);
+                } else if (duration.includes('mois')) {
+                    const months = parseInt(duration);
+                    end.setMonth(start.getMonth() + months);
+                }
+                
+                end.setDate(end.getDate() - 1); // Fin la veille
+                document.getElementById('date_fin').value = end.toISOString().split('T')[0];
+            }
+        }
+
+        document.getElementById('date_debut').addEventListener('change', calculateEndDate);
+        document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
+
+        // Initialiser la date du jour
+        document.getElementById('date_signature').value = new Date().toISOString().split('T')[0];
+
+        function previewBail() {
+            const formData = collectFormData();
+            const preview = document.getElementById('preview');
+            
+            preview.innerHTML = generateBailHTML(formData);
+            
+            document.querySelector('.edit-mode').classList.add('hidden');
+            document.querySelector('.preview-mode').classList.add('active');
+            document.getElementById('editBtn').style.display = 'inline-block';
+        }
+
+        function editBail() {
+            document.querySelector('.edit-mode').classList.remove('hidden');
+            document.querySelector('.preview-mode').classList.remove('active');
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function collectFormData() {
+            const data = {
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                bailleur_naissance: document.getElementById('bailleur_naissance').value,
+                bailleur_lieu_naissance: document.getElementById('bailleur_lieu_naissance').value,
+                bailleur_adresse: document.getElementById('bailleur_adresse').value,
+                bailleur_tel: document.getElementById('bailleur_tel').value,
+                bailleur_email: document.getElementById('bailleur_email').value,
+                
+                // Collecte des données de tous les preneurs
+                preneurs: [],
+                
+                logement_adresse: document.getElementById('logement_adresse').value,
+                logement_cp: document.getElementById('logement_cp').value,
+                logement_ville: document.getElementById('logement_ville').value,
+                logement_type: document.getElementById('logement_type').value,
+                logement_surface: document.getElementById('logement_surface').value,
+                logement_dependances: document.getElementById('logement_dependances').value,
+                logement_equipements: document.getElementById('logement_equipements').value,
+                
+                duree_type: document.querySelector('input[name="duree_type"]:checked')?.value || '',
+                duree_bail: document.getElementById('duree_bail').value,
+                date_debut: document.getElementById('date_debut').value,
+                date_fin: document.getElementById('date_fin').value,
+                
+                loyer_mensuel: document.getElementById('loyer_mensuel').value,
+                charges: document.getElementById('charges').value,
+                charges_detail: document.getElementById('charges_detail').value,
+                loyer_total: document.getElementById('loyer_total').value,
+                mode_paiement: document.getElementById('mode_paiement').value,
+                jour_paiement: document.getElementById('jour_paiement').value,
+                
+                depot_garantie: document.getElementById('depot_garantie').value,
+                preavis_preneur: document.getElementById('preavis_preneur').value,
+                preavis_bailleur: document.getElementById('preavis_bailleur').value,
+                sous_location: document.querySelector('input[name="sous_location"]:checked')?.value || '',
+                animaux: document.querySelector('input[name="animaux"]:checked')?.value || '',
+                clauses_particulieres: document.getElementById('clauses_particulieres').value,
+                lieu_signature: document.getElementById('lieu_signature').value,
+                date_signature: document.getElementById('date_signature').value
+            };
+            
+            // Collecte des données de tous les preneurs
+            for (let i = 1; i <= preneurCount; i++) {
+                const preneurData = {
+                    nom: document.getElementById(`preneur${i}_nom`)?.value || '',
+                    naissance: document.getElementById(`preneur${i}_naissance`)?.value || '',
+                    lieu_naissance: document.getElementById(`preneur${i}_lieu_naissance`)?.value || '',
+                    adresse_principale: document.getElementById(`preneur${i}_adresse_principale`)?.value || '',
+                    tel: document.getElementById(`preneur${i}_tel`)?.value || '',
+                    email: document.getElementById(`preneur${i}_email`)?.value || '',
+                    profession: document.getElementById(`preneur${i}_profession`)?.value || ''
+                };
+                data.preneurs.push(preneurData);
+            }
+            
+            return data;
+        }
+
+        function generateBailHTML(data) {
+            return `
+                <h1>CONTRAT DE BAIL DE LOCATION MEUBLÉE</h1>
+                <h2>À TITRE DE RÉSIDENCE SECONDAIRE</h2>
+                <h3>(Articles 1708 et suivants du Code civil)</h3>
+                
+                <div class="section">
+                    <div class="section-title">LE BAILLEUR</div>
+                    <p><strong>Nom et prénom :</strong> ${data.bailleur_nom}</p>
+                    <p><strong>Né(e) le :</strong> ${formatDate(data.bailleur_naissance)} <strong>à</strong> ${data.bailleur_lieu_naissance}</p>
+                    <p><strong>Domicilié(e) :</strong> ${data.bailleur_adresse}</p>
+                    <p><strong>Téléphone :</strong> ${data.bailleur_tel}</p>
+                    <p><strong>Email :</strong> ${data.bailleur_email}</p>
+                    <p><em>Ci-après dénommé « le Bailleur »</em></p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">${data.preneurs.length > 1 ? 'LES PRENEURS' : 'LE PRENEUR'}</div>
+                    ${data.preneurs.map((preneur, index) => `
+                        ${data.preneurs.length > 1 ? `<h4>Preneur ${index + 1} :</h4>` : ''}
+                        <p><strong>Nom et prénom :</strong> ${preneur.nom}</p>
+                        <p><strong>Né(e) le :</strong> ${formatDate(preneur.naissance)} <strong>à</strong> ${preneur.lieu_naissance}</p>
+                        <p><strong>Domicilié(e) à titre de RÉSIDENCE PRINCIPALE :</strong> ${preneur.adresse_principale}</p>
+                        <p><strong>Téléphone :</strong> ${preneur.tel}</p>
+                        <p><strong>Email :</strong> ${preneur.email}</p>
+                        <p><strong>Profession :</strong> ${preneur.profession}</p>
+                        ${index < data.preneurs.length - 1 ? '<hr style="margin: 20px 0; border-color: #ecf0f1;">' : ''}
+                    `).join('')}
+                    <p><em>Ci-après dénommé${data.preneurs.length > 1 ? 's collectivement' : ''} « le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} »</em></p>
+                    ${data.preneurs.length > 1 ? '<p><strong>En cas de pluralité de preneurs :</strong> Les preneurs sont solidairement responsables de toutes les obligations du présent bail.</p>' : ''}
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 1 - OBJET DU CONTRAT</div>
+                    <p>Le présent contrat a pour objet la location du logement meublé ci-après désigné, destiné à l'usage <strong>exclusif de résidence secondaire</strong> du${data.preneurs.length > 1 ? ' (des)' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''}, à l'exclusion de tout usage commercial, professionnel ou artisanal.</p>
+                    <p><strong>Le logement loué ne constitue pas et ne pourra pas constituer la résidence principale du${data.preneurs.length > 1 ? ' (des)' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''}.</strong></p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 2 - DÉSIGNATION DU LOGEMENT</div>
+                    <p><strong>Adresse :</strong> ${data.logement_adresse}</p>
+                    <p><strong>Code postal :</strong> ${data.logement_cp} <strong>Ville :</strong> ${data.logement_ville}</p>
+                    <p><strong>Type :</strong> ${data.logement_type}</p>
+                    <p><strong>Surface habitable :</strong> ${data.logement_surface} m²</p>
+                    ${data.logement_dependances ? `<p><strong>Dépendances :</strong> ${data.logement_dependances}</p>` : ''}
+                    ${data.logement_equipements ? `<p><strong>Équipements :</strong> ${data.logement_equipements}</p>` : ''}
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 4 - DURÉE DU BAIL</div>
+                    <p>Le présent bail est conclu pour une durée de <strong>${data.duree_bail}</strong>, à compter du <strong>${formatDate(data.date_debut)}</strong> et prenant fin le <strong>${formatDate(data.date_fin)}</strong>.</p>
+                    ${data.duree_type === 'determine' ? 
+                        '<p>À l\'expiration de cette période, le bail prendra fin de plein droit sans qu\'il soit besoin de congé, sauf accord express des parties pour un renouvellement.</p>' :
+                        '<p>À défaut de congé donné par l\'une ou l\'autre des parties dans les conditions prévues au présent bail, celui-ci sera reconduit tacitement.</p>'
+                    }
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 5 - LOYER ET CHARGES</div>
+                    <p><strong>Loyer mensuel :</strong> ${data.loyer_mensuel} € (${numberToWords(data.loyer_mensuel)} euros)</p>
+                    <p><strong>Charges forfaitaires :</strong> ${data.charges} € (${numberToWords(data.charges)} euros)</p>
+                    ${data.charges_detail ? `<p><em>Les charges forfaitaires comprennent : ${data.charges_detail}</em></p>` : ''}
+                    <p><strong>Loyer total mensuel (charges comprises) :</strong> ${data.loyer_total} €</p>
+                    <p><strong>Modalités de paiement :</strong> Le loyer et les charges sont payables mensuellement à terme échu, au plus tard le ${data.jour_paiement} de chaque mois, par ${data.mode_paiement}.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 6 - DÉPÔT DE GARANTIE</div>
+                    <p>Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} verse${data.preneurs.length > 1 ? 'nt' : ''} au Bailleur, lors de la signature du présent bail, un dépôt de garantie d'un montant de <strong>${data.depot_garantie} €</strong> destiné à garantir l'exécution des obligations locatives.</p>
+                    <p>Ce dépôt sera restitué dans un délai de deux mois suivant la remise des clés, déduction faite le cas échéant des sommes dues au Bailleur et des réparations locatives nécessaires.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 11 - RÉSILIATION DU BAIL</div>
+                    <p><strong>11.1 - Résiliation par le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} :</strong> Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} peut (peuvent) résilier le bail à tout moment en respectant un préavis de ${data.preavis_preneur} par lettre recommandée avec accusé de réception.</p>
+                    <p><strong>11.2 - Résiliation par le Bailleur :</strong> Le Bailleur peut donner congé pour la fin du bail en respectant un préavis de ${data.preavis_bailleur} par lettre recommandée avec accusé de réception.</p>
+                </div>
+
+                ${data.sous_location === 'interdite' ? 
+                    '<div class="section"><div class="section-title">ARTICLE 10 - SOUS-LOCATION</div><p>La sous-location et la cession du présent bail sont formellement interdites.</p></div>' :
+                    '<div class="section"><div class="section-title">ARTICLE 10 - SOUS-LOCATION</div><p>La sous-location est autorisée sous réserve de l\'accord écrit préalable du Bailleur.</p></div>'
+                }
+
+                ${data.animaux ? 
+                    `<div class="section"><div class="section-title">CLAUSES DIVERSES - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
+                }
+
+                ${data.clauses_particulieres ? 
+                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><p>${data.clauses_particulieres}</p></div>` : ''
+                }
+
+                <div class="signatures">
+                    <div class="signature-box">
+                        <strong>LE BAILLEUR</strong><br>
+                        <em>Lu et approuvé</em><br>
+                        <em>Bon pour accord</em>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="signature-box">
+                        <strong>LE${data.preneurs.length > 1 ? 'S' : ''} PRENEUR${data.preneurs.length > 1 ? 'S' : ''}</strong><br>
+                        <em>Lu et approuvé</em><br>
+                        <em>Bon pour accord</em>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; margin-top: 30px;">
+                    <strong>Fait à ${data.lieu_signature}, le ${formatDate(data.date_signature)}</strong><br>
+                    <strong>En deux exemplaires originaux</strong>
+                </p>
+            `;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function numberToWords(num) {
+            // Fonction simplifiée pour convertir les nombres en mots
+            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'];
+            if (num >= 0 && num < 11) {
+                return ones[num];
+            }
+            return num.toString(); // Pour les nombres plus complexes, on garde le chiffre
+        }
+
+        function getAnimauxText(value) {
+            switch(value) {
+                case 'interdits': return 'Interdits';
+                case 'autorises': return 'Autorisés';
+                case 'autorises_conditions': return 'Autorisés sous conditions';
+                default: return '';
+            }
+        }
+
+        function saveBail() {
+            const data = collectFormData();
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'bail_residence_secondaire.json';
+            link.click();
+        }
+
+        function loadBail() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function fillFormData(data) {
+            // Remplir les données du bailleur
+            Object.keys(data).forEach(key => {
+                if (key !== 'preneurs') {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'radio') {
+                            const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+                            if (radio) radio.checked = true;
+                        } else {
+                            element.value = data[key];
+                        }
+                    }
+                }
+            });
+            
+            // Gérer les preneurs
+            if (data.preneurs && data.preneurs.length > 0) {
+                // D'abord, supprimer tous les preneurs existants sauf le premier
+                while (preneurCount > 1) {
+                    removePreneur();
+                }
+                
+                // Remplir le premier preneur
+                const preneur1 = data.preneurs[0];
+                Object.keys(preneur1).forEach(key => {
+                    const element = document.getElementById(`preneur1_${key}`);
+                    if (element) element.value = preneur1[key];
+                });
+                
+                // Ajouter et remplir les preneurs supplémentaires
+                for (let i = 1; i < data.preneurs.length; i++) {
+                    addPreneur();
+                    const preneurData = data.preneurs[i];
+                    Object.keys(preneurData).forEach(key => {
+                        const element = document.getElementById(`preneur${i + 1}_${key}`);
+                        if (element) element.value = preneurData[key];
+                    });
+                }
+            }
+            
+            // Recalculer le total
+            calculateTotal();
+        }
+    </script>
+</body>
+</html>

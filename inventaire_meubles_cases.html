@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaire des Meubles - Cases à Cocher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #9b59b6;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #9b59b6;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #8e44ad;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #9b59b6;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 10px;
+            min-width: 150px;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 5px rgba(155, 89, 182, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .piece-block {
+            border: 2px solid #f4e6ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fdfbff;
+        }
+
+        .piece-block h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-block {
+            border: 1px solid #e8e8e8;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            display: grid;
+            grid-template-columns: 200px auto 140px 1fr;
+            gap: 15px;
+            align-items: start;
+            position: relative;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            background-color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .item-name input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item-details input,
+        .item-details textarea {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .item-details .quantity-input {
+            width: 60px;
+        }
+
+        .etat-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 120px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            padding: 3px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .checkbox-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 6px;
+            transform: scale(1.1);
+            min-width: auto;
+            width: auto;
+        }
+
+        .tres-bon-etat { color: #2ecc71; }
+        .bon-etat { color: #27ae60; }
+        .moyen-etat { color: #f39c12; }
+        .usage-etat { color: #95a5a6; }
+
+        .observations-area {
+            min-height: 80px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 8px;
+            resize: vertical;
+            font-size: 12px;
+        }
+
+        .delete-item {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 3px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .delete-item:hover {
+            background: #c0392b;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .preview-mode {
+            display: none;
+        }
+
+        .preview-mode.active {
+            display: block;
+        }
+
+        .edit-mode.hidden {
+            display: none;
+        }
+
+        .inventaire-preview {
+            border: 2px solid #9b59b6;
+            padding: 30px;
+            margin: 20px 0;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .inventaire-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .inventaire-header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 30%;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 30px 0 10px 0;
+            height: 40px;
+        }
+
+        .mini-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .template-section {
+            background-color: #f8f9fa;
+            border-left: 4px solid #9b59b6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .template-section h5 {
+            color: #9b59b6;
+            margin-bottom: 10px;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .template-btn {
+            padding: 5px 10px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .template-btn:hover {
+            background: #8e44ad;
+        }
+
+        .important-notice {
+            background-color: #f8f4ff;
+            border: 1px solid #d1c4e9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .important-notice h4 {
+            color: #7b1fa2;
+            margin-bottom: 10px;
+        }
+
+        .important-notice ul {
+            margin-left: 20px;
+            color: #7b1fa2;
+        }
+
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .item-table th,
+        .item-table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+            vertical-align: top;
+        }
+
+        .item-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .checkbox-print {
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 0;
+                margin: 0;
+            }
+            .header, .buttons, .edit-mode, .important-notice {
+                display: none !important;
+            }
+            .preview-mode {
+                display: block !important;
+            }
+            .inventaire-preview {
+                page-break-after: always;
+                margin: 0;
+                padding: 15px;
+                border: none;
+                background: white;
+                width: 100%;
+                min-height: 100vh;
+                font-size: 11pt;
+            }
+            .item-table th,
+            .item-table td {
+                font-size: 10px;
+                padding: 4px;
+            }
+            .checkbox-print {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>INVENTAIRE DES MEUBLES</h1>
+            <h2>Inventaire détaillé du mobilier et des équipements</h2>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">INFORMATIONS GÉNÉRALES</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type d'inventaire :</label>
+                        <select id="type_inventaire">
+                            <option value="entree">Inventaire d'entrée</option>
+                            <option value="sortie">Inventaire de sortie</option>
+                            <option value="controle">Inventaire de contrôle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date :</label>
+                        <input type="date" id="date_inventaire">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Numéro d'inventaire :</label>
+                        <input type="text" id="numero_inventaire" placeholder="Ex: INV-2025-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Référence état des lieux :</label>
+                        <input type="text" id="reference_etat" placeholder="Ex: EDL-2025-001">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="version_manuscrite" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Version manuscrite (cases vides pour remplissage à la main)
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOGEMENT CONCERNÉ</div>
+                <div class="form-group">
+                    <label>Adresse :</label>
+                    <textarea id="logement_adresse" placeholder="Adresse complète du logement"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Code postal :</label>
+                        <input type="text" id="logement_cp" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville :</label>
+                        <input type="text" id="logement_ville" placeholder="Paris">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type de logement :</label>
+                        <select id="logement_type">
+                            <option value="">Sélectionner</option>
+                            <option value="Studio">Studio</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="Maison">Maison</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Surface :</label>
+                        <input type="number" id="logement_surface" placeholder="m²">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PARTICIPANTS</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Bailleur :</label>
+                        <input type="text" id="bailleur_nom" placeholder="Nom et prénom du bailleur">
+                    </div>
+                    <div class="form-group">
+                        <label>Locataire :</label>
+                        <input type="text" id="locataire_nom" placeholder="Nom et prénom du locataire">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="expert_present" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Expert ou tiers présent
+                    </label>
+                </div>
+                <div class="form-group" id="expert_group" style="display: none;">
+                    <label>Nom de l'expert :</label>
+                    <input type="text" id="expert_nom" placeholder="Nom et qualité de l'expert">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">INVENTAIRE PAR PIÈCES</div>
+                
+                <div class="template-section">
+                    <h5>🏠 Modèles prédéfinis</h5>
+                    <div class="template-buttons">
+                        <button class="template-btn" onclick="loadTemplate('studio')">Studio meublé</button>
+                        <button class="template-btn" onclick="loadTemplate('t2')">T2 meublé</button>
+                        <button class="template-btn" onclick="loadTemplate('t3')">T3 meublé</button>
+                        <button class="template-btn" onclick="loadTemplate('vide')">Effacer tout</button>
+                    </div>
+                    <p style="font-size: 12px; color: #666; margin-top: 8px;">💡 Utilisez ces modèles comme base et ajustez selon vos besoins</p>
+                </div>
+
+                <div id="pieces-container">
+                    <div class="piece-block" data-piece="1">
+                        <h4>
+                            <span>Pièce 1</span>
+                            <div>
+                                <input type="text" id="piece1_nom" placeholder="Nom de la pièce" style="width: 200px; margin-right: 10px;">
+                                <button type="button" class="mini-btn btn-warning" onclick="removePiece(1)" style="display: none;">🗑️</button>
+                            </div>
+                        </h4>
+                        <div id="piece1_items">
+                            <div class="item-block">
+                                <div class="item-name">
+                                    <input type="text" value="Table" placeholder="Nom de l'objet">
+                                </div>
+                                <div class="item-details">
+                                    <input type="number" value="1" min="0" class="quantity-input" placeholder="Qté" title="Quantité">
+                                    <input type="text" placeholder="Description détaillée" title="Description">
+                                    <textarea placeholder="Matériau, couleur, marque..." title="Observations détaillées"></textarea>
+                                </div>
+                                <div class="etat-checkboxes">
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="tb">
+                                        <span class="tres-bon-etat">Très Bon</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="bon">
+                                        <span class="bon-etat">Bon</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="moyen">
+                                        <span class="moyen-etat">Moyen</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="usage">
+                                        <span class="usage-etat">Usagé</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="delete-item" onclick="removeItem(this)">🗑️</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="addItem(1)" style="margin-top: 10px;">➕ Ajouter un objet</button>
+                    </div>
+                </div>
+                <div class="buttons" style="margin-top: 15px;">
+                    <button class="btn btn-info" type="button" onclick="addPiece()">➕ Ajouter une pièce</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">OBSERVATIONS GÉNÉRALES</div>
+                <div class="form-group">
+                    <label>Observations importantes :</label>
+                    <textarea id="observations_generales" placeholder="Toute observation importante concernant l'inventaire..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-mode" id="preview">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+
+        <div class="important-notice">
+            <h4>✨ AVANTAGES DE LA VERSION AVEC CASES À COCHER</h4>
+            <ul>
+                <li>Remplissage plus rapide et standardisé sur le terrain</li>
+                <li>Idéal pour la version manuscrite : il suffit de cocher les cases</li>
+                <li>Évite les écritures illisibles et les divergences d'appréciation</li>
+                <li>Format professionnel et clair pour tous les participants</li>
+                <li>Gain de temps considérable lors de l'inventaire</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="previewInventaire()">📄 Aperçu de l'inventaire</button>
+            <button class="btn btn-info" onclick="editInventaire()" style="display:none;" id="editBtn">✏️ Modifier</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="btn btn-primary" onclick="saveInventaire()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadInventaire()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        let pieceCount = 1;
+
+        // Modèles prédéfinis
+        const templates = {
+            studio: {
+                pieces: [{
+                    nom: "Studio",
+                    items: [
+                        { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "bon", observations: "Matelas ressorts" },
+                        { objet: "Table", quantite: 1, description: "Table pliante", etat: "bon", observations: "Bois clair" },
+                        { objet: "Chaise", quantite: 2, description: "Chaises en bois", etat: "bon", observations: "Assise rembourrée" },
+                        { objet: "Armoire", quantite: 1, description: "Armoire 2 portes", etat: "bon", observations: "Mélaminé blanc" },
+                        { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur 120L", etat: "bon", observations: "Classe A+" },
+                        { objet: "Plaque de cuisson", quantite: 1, description: "Plaque électrique 2 feux", etat: "bon", observations: "Encastrable" },
+                        { objet: "Micro-ondes", quantite: 1, description: "Micro-ondes 20L", etat: "bon", observations: "Posable blanc" }
+                    ]
+                }]
+            },
+            t2: {
+                pieces: [
+                    {
+                        nom: "Salon",
+                        items: [
+                            { objet: "Canapé", quantite: 1, description: "Canapé 3 places", etat: "bon", observations: "Tissu gris" },
+                            { objet: "Table basse", quantite: 1, description: "Table basse en verre", etat: "bon", observations: "Plateau verre trempé" },
+                            { objet: "Télévision", quantite: 1, description: "TV LED 32 pouces", etat: "bon", observations: "Full HD" },
+                            { objet: "Étagère", quantite: 1, description: "Bibliothèque 5 niveaux", etat: "bon", observations: "Bois foncé" }
+                        ]
+                    },
+                    {
+                        nom: "Chambre",
+                        items: [
+                            { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "bon", observations: "Sommier à lattes" },
+                            { objet: "Armoire", quantite: 1, description: "Armoire 3 portes", etat: "bon", observations: "Avec penderie et étagères" },
+                            { objet: "Commode", quantite: 1, description: "Commode 4 tiroirs", etat: "bon", observations: "Chêne massif" }
+                        ]
+                    },
+                    {
+                        nom: "Cuisine",
+                        items: [
+                            { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur 200L", etat: "bon", observations: "Congélateur intégré" },
+                            { objet: "Four", quantite: 1, description: "Four électrique encastrable", etat: "bon", observations: "Multifonction" },
+                            { objet: "Lave-vaisselle", quantite: 1, description: "Lave-vaisselle 12 couverts", etat: "bon", observations: "Encastrable inox" },
+                            { objet: "Table", quantite: 1, description: "Table cuisine 4 personnes", etat: "bon", observations: "Plateau stratifié" },
+                            { objet: "Chaise", quantite: 4, description: "Chaises cuisine", etat: "bon", observations: "Assise PVC" }
+                        ]
+                    }
+                ]
+            },
+            t3: {
+                pieces: [
+                    {
+                        nom: "Salon",
+                        items: [
+                            { objet: "Canapé", quantite: 1, description: "Canapé d'angle", etat: "bon", observations: "Cuir synthétique marron" },
+                            { objet: "Fauteuil", quantite: 2, description: "Fauteuils assortis", etat: "bon", observations: "Cuir synthétique" },
+                            { objet: "Table basse", quantite: 1, description: "Table basse bois massif", etat: "bon", observations: "Chêne naturel" },
+                            { objet: "Télévision", quantite: 1, description: "TV LED 43 pouces", etat: "bon", observations: "4K HDR" },
+                            { objet: "Meuble TV", quantite: 1, description: "Meuble TV avec rangements", etat: "bon", observations: "2 tiroirs + niche" }
+                        ]
+                    },
+                    {
+                        nom: "Chambre 1",
+                        items: [
+                            { objet: "Lit", quantite: 1, description: "Lit 160x200 avec matelas", etat: "bon", observations: "Matelas mémoire de forme" },
+                            { objet: "Armoire", quantite: 1, description: "Armoire penderie 3 portes", etat: "bon", observations: "Miroir central" },
+                            { objet: "Commode", quantite: 1, description: "Commode 6 tiroirs", etat: "bon", observations: "Laqué blanc" },
+                            { objet: "Table de chevet", quantite: 2, description: "Tables de chevet assorties", etat: "bon", observations: "1 tiroir chacune" }
+                        ]
+                    },
+                    {
+                        nom: "Chambre 2",
+                        items: [
+                            { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "bon", observations: "Matelas ressorts" },
+                            { objet: "Armoire", quantite: 1, description: "Armoire 2 portes", etat: "bon", observations: "Penderie + étagères" },
+                            { objet: "Bureau", quantite: 1, description: "Bureau avec tiroirs", etat: "bon", observations: "3 tiroirs latéraux" },
+                            { objet: "Chaise", quantite: 1, description: "Chaise de bureau", etat: "bon", observations: "Réglable en hauteur" }
+                        ]
+                    },
+                    {
+                        nom: "Cuisine",
+                        items: [
+                            { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur américain", etat: "bon", observations: "Distributeur d'eau" },
+                            { objet: "Four", quantite: 1, description: "Four pyrolyse encastrable", etat: "bon", observations: "Inox brossé" },
+                            { objet: "Plaque de cuisson", quantite: 1, description: "Plaque induction 4 feux", etat: "bon", observations: "Commandes tactiles" },
+                            { objet: "Lave-vaisselle", quantite: 1, description: "Lave-vaisselle encastrable", etat: "bon", observations: "14 couverts" },
+                            { objet: "Lave-linge", quantite: 1, description: "Lave-linge 8kg", etat: "bon", observations: "Classe A+++" },
+                            { objet: "Table", quantite: 1, description: "Table salle à manger 6 personnes", etat: "bon", observations: "Bois massif extensible" },
+                            { objet: "Chaise", quantite: 6, description: "Chaises salle à manger", etat: "bon", observations: "Tissu beige" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Gestion de l'affichage expert
+        document.getElementById('expert_present').addEventListener('change', function() {
+            document.getElementById('expert_group').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Initialiser la date actuelle
+        const now = new Date();
+        document.getElementById('date_inventaire').value = now.toISOString().split('T')[0];
+
+        // Générer numéro automatique
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById('numero_inventaire').value = `INV-${year}${month}${day}-001`;
+
+        // Gestion des checkboxes d'état (une seule sélection par objet)
+        function attachCheckboxListeners() {
+            document.querySelectorAll('.item-block').forEach(block => {
+                const checkboxes = block.querySelectorAll('.etat-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            // Décocher toutes les autres cases de ce bloc
+                            checkboxes.forEach(cb => {
+                                if (cb !== this) cb.checked = false;
+                            });
+                        }
+                    });
+                });
+            });
+        }
+
+        function loadTemplate(templateName) {
+            if (templateName === 'vide') {
+                // Vider tout
+                const container = document.getElementById('pieces-container');
+                container.innerHTML = '';
+                pieceCount = 0;
+                addPiece();
+                return;
+            }
+
+            const template = templates[templateName];
+            if (!template) return;
+
+            // Vider le conteneur actuel
+            const container = document.getElementById('pieces-container');
+            container.innerHTML = '';
+            pieceCount = 0;
+
+            // Charger le template
+            template.pieces.forEach(pieceData => {
+                addPiece();
+                const currentPieceId = pieceCount;
+                
+                // Remplir le nom de la pièce
+                document.getElementById(`piece${currentPieceId}_nom`).value = pieceData.nom;
+                
+                // Vider le conteneur d'items et remplir avec les données du template
+                const itemsContainer = document.getElementById(`piece${currentPieceId}_items`);
+                itemsContainer.innerHTML = '';
+                
+                pieceData.items.forEach(itemData => {
+                    const itemBlock = document.createElement('div');
+                    itemBlock.className = 'item-block';
+                    itemBlock.innerHTML = `
+                        <div class="item-name">
+                            <input type="text" value="${itemData.objet}" placeholder="Nom de l'objet">
+                        </div>
+                        <div class="item-details">
+                            <input type="number" value="${itemData.quantite}" min="0" class="quantity-input" placeholder="Qté" title="Quantité">
+                            <input type="text" value="${itemData.description}" placeholder="Description détaillée" title="Description">
+                            <textarea placeholder="Matériau, couleur, marque..." title="Observations détaillées">${itemData.observations}</textarea>
+                        </div>
+                        <div class="etat-checkboxes">
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="tb" ${itemData.etat === 'tb' ? 'checked' : ''}>
+                                <span class="tres-bon-etat">Très Bon</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="bon" ${itemData.etat === 'bon' ? 'checked' : ''}>
+                                <span class="bon-etat">Bon</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="moyen" ${itemData.etat === 'moyen' ? 'checked' : ''}>
+                                <span class="moyen-etat">Moyen</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="usage" ${itemData.etat === 'usage' ? 'checked' : ''}>
+                                <span class="usage-etat">Usagé</span>
+                            </div>
+                        </div>
+                        <button type="button" class="delete-item" onclick="removeItem(this)">🗑️</button>
+                    `;
+                    itemsContainer.appendChild(itemBlock);
+                });
+            });
+
+            attachCheckboxListeners();
+        }
+
+        function removeItem(button) {
+            const itemBlock = button.closest('.item-block');
+            if (itemBlock) {
+                itemBlock.remove();
+            }
+        }
+
+        function addPiece() {
+            pieceCount++;
+            const container = document.getElementById('pieces-container');
+            const newPiece = document.createElement('div');
+            newPiece.className = 'piece-block';
+            newPiece.setAttribute('data-piece', pieceCount);
+            
+            newPiece.innerHTML = `
+                <h4>
+                    <span>Pièce ${pieceCount}</span>
+                    <div>
+                        <input type="text" id="piece${pieceCount}_nom" placeholder="Nom de la pièce" style="width: 200px; margin-right: 10px;">
+                        <button type="button" class="mini-btn btn-warning" onclick="removePiece(${pieceCount})">🗑️</button>
+                    </div>
+                </h4>
+                <div id="piece${pieceCount}_items">
+                    <div class="item-block">
+                        <div class="item-name">
+                            <input type="text" placeholder="Nom de l'objet">
+                        </div>
+                        <div class="item-details">
+                            <input type="number" value="1" min="0" class="quantity-input" placeholder="Qté" title="Quantité">
+                            <input type="text" placeholder="Description détaillée" title="Description">
+                            <textarea placeholder="Matériau, couleur, marque..." title="Observations détaillées"></textarea>
+                        </div>
+                        <div class="etat-checkboxes">
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="tb">
+                                <span class="tres-bon-etat">Très Bon</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="bon">
+                                <span class="bon-etat">Bon</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="moyen">
+                                <span class="moyen-etat">Moyen</span>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" class="etat-checkbox" data-etat="usage">
+                                <span class="usage-etat">Usagé</span>
+                            </div>
+                        </div>
+                        <button type="button" class="delete-item" onclick="removeItem(this)">🗑️</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info" onclick="addItem(${pieceCount})" style="margin-top: 10px;">➕ Ajouter un objet</button>
+            `;
+            
+            container.appendChild(newPiece);
+            updateRemoveButtons();
+            attachCheckboxListeners();
+        }
+
+        function removePiece(pieceId) {
+            const piece = document.querySelector(`[data-piece="${pieceId}"]`);
+            if (piece) {
+                piece.remove();
+                updateRemoveButtons();
+            }
+        }
+
+        function updateRemoveButtons() {
+            const pieces = document.querySelectorAll('.piece-block');
+            pieces.forEach((piece, index) => {
+                const removeBtn = piece.querySelector('.btn-warning');
+                if (removeBtn) {
+                    removeBtn.style.display = index === 0 ? 'none' : 'inline-block';
+                }
+            });
+        }
+
+        function addItem(pieceId) {
+            const container = document.getElementById(`piece${pieceId}_items`);
+            const newItem = document.createElement('div');
+            newItem.className = 'item-block';
+            
+            newItem.innerHTML = `
+                <div class="item-name">
+                    <input type="text" placeholder="Nom de l'objet">
+                </div>
+                <div class="item-details">
+                    <input type="number" value="1" min="0" class="quantity-input" placeholder="Qté" title="Quantité">
+                    <input type="text" placeholder="Description détaillée" title="Description">
+                    <textarea placeholder="Matériau, couleur, marque..." title="Observations détaillées"></textarea>
+                </div>
+                <div class="etat-checkboxes">
+                    <div class="checkbox-option">
+                        <input type="checkbox" class="etat-checkbox" data-etat="tb">
+                        <span class="tres-bon-etat">Très Bon</span>
+                    </div>
+                    <div class="checkbox-option">
+                        <input type="checkbox" class="etat-checkbox" data-etat="bon">
+                        <span class="bon-etat">Bon</span>
+                    </div>
+                    <div class="checkbox-option">
+                        <input type="checkbox" class="etat-checkbox" data-etat="moyen">
+                        <span class="moyen-etat">Moyen</span>
+                    </div>
+                    <div class="checkbox-option">
+                        <input type="checkbox" class="etat-checkbox" data-etat="usage">
+                        <span class="usage-etat">Usagé</span>
+                    </div>
+                </div>
+                <button type="button" class="delete-item" onclick="removeItem(this)">🗑️</button>
+            `;
+            
+            container.appendChild(newItem);
+            attachCheckboxListeners();
+        }
+
+        function previewInventaire() {
+            const formData = collectFormData();
+            const preview = document.getElementById('preview');
+            
+            preview.innerHTML = generateInventaireHTML(formData);
+            
+            document.querySelector('.edit-mode').classList.add('hidden');
+            document.querySelector('.preview-mode').classList.add('active');
+            document.getElementById('editBtn').style.display = 'inline-block';
+        }
+
+        function editInventaire() {
+            document.querySelector('.edit-mode').classList.remove('hidden');
+            document.querySelector('.preview-mode').classList.remove('active');
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function collectFormData() {
+            const data = {
+                type_inventaire: document.getElementById('type_inventaire').value,
+                date_inventaire: document.getElementById('date_inventaire').value,
+                numero_inventaire: document.getElementById('numero_inventaire').value,
+                reference_etat: document.getElementById('reference_etat').value,
+                version_manuscrite: document.getElementById('version_manuscrite').checked,
+                
+                logement_adresse: document.getElementById('logement_adresse').value,
+                logement_cp: document.getElementById('logement_cp').value,
+                logement_ville: document.getElementById('logement_ville').value,
+                logement_type: document.getElementById('logement_type').value,
+                logement_surface: document.getElementById('logement_surface').value,
+                
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                locataire_nom: document.getElementById('locataire_nom').value,
+                expert_present: document.getElementById('expert_present').checked,
+                expert_nom: document.getElementById('expert_nom').value,
+                
+                observations_generales: document.getElementById('observations_generales').value,
+                
+                pieces: []
+            };
+            
+            // Collecte des données des pièces et objets
+            const pieces = document.querySelectorAll('.piece-block');
+            pieces.forEach((piece, index) => {
+                const pieceId = index + 1;
+                const pieceData = {
+                    nom: document.getElementById(`piece${pieceId}_nom`)?.value || `Pièce ${pieceId}`,
+                    items: []
+                };
+                
+                const items = piece.querySelectorAll('.item-block');
+                items.forEach(item => {
+                    const nameInput = item.querySelector('.item-name input');
+                    const detailsInputs = item.querySelectorAll('.item-details input, .item-details textarea');
+                    const checkedBox = item.querySelector('.etat-checkbox:checked');
+                    
+                    if (nameInput && nameInput.value.trim()) {
+                        const itemData = {
+                            objet: nameInput.value,
+                            quantite: detailsInputs[0] ? detailsInputs[0].value : 1,
+                            description: detailsInputs[1] ? detailsInputs[1].value : '',
+                            observations: detailsInputs[2] ? detailsInputs[2].value : '',
+                            etat: checkedBox ? checkedBox.dataset.etat : '',
+                            etatText: checkedBox ? checkedBox.nextElementSibling.textContent : ''
+                        };
+                        pieceData.items.push(itemData);
+                    }
+                });
+                
+                if (pieceData.items.length > 0) {
+                    data.pieces.push(pieceData);
+                }
+            });
+            
+            return data;
+        }
+
+        function generateInventaireHTML(data) {
+            const typeText = data.type_inventaire === 'entree' ? 'D\'ENTRÉE' : 
+                            data.type_inventaire === 'sortie' ? 'DE SORTIE' : 'DE CONTRÔLE';
+            
+            return `
+                <div class="inventaire-preview">
+                    <div class="inventaire-header">
+                        <h1>INVENTAIRE ${typeText}</h1>
+                        <p><strong>N° ${data.version_manuscrite ? '____________________' : data.numero_inventaire}</strong></p>
+                        <p><strong>Date :</strong> ${data.version_manuscrite ? '____________________' : formatDate(data.date_inventaire)}</p>
+                        ${data.reference_etat && !data.version_manuscrite ? `<p><strong>Référence état des lieux :</strong> ${data.reference_etat}</p>` : ''}
+                        ${data.version_manuscrite ? '<p><strong>Référence état des lieux :</strong> ____________________</p>' : ''}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">LOGEMENT CONCERNÉ</div>
+                        <p><strong>Adresse :</strong> ${data.version_manuscrite ? '____________________' : data.logement_adresse}</p>
+                        <p><strong>Code postal :</strong> ${data.version_manuscrite ? '______' : data.logement_cp} <strong>Ville :</strong> ${data.version_manuscrite ? '____________________' : data.logement_ville}</p>
+                        <p><strong>Type :</strong> ${data.version_manuscrite ? '______' : data.logement_type} <strong>Surface :</strong> ${data.version_manuscrite ? '______ m²' : data.logement_surface + ' m²'}</p>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">PARTICIPANTS</div>
+                        <p><strong>Bailleur :</strong> ${data.version_manuscrite ? '____________________' : data.bailleur_nom}</p>
+                        <p><strong>Locataire :</strong> ${data.version_manuscrite ? '____________________' : data.locataire_nom}</p>
+                        ${data.expert_present && !data.version_manuscrite ? `<p><strong>Expert :</strong> ${data.expert_nom}</p>` : ''}
+                        ${data.version_manuscrite ? '<p><strong>Expert :</strong> ____________________</p>' : ''}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">INVENTAIRE DÉTAILLÉ</div>
+                        ${data.pieces.map(piece => `
+                            <h4>${piece.nom}</h4>
+                            <table class="item-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%;">Objet</th>
+                                        <th style="width: 8%;">Qté</th>
+                                        <th style="width: 25%;">Description</th>
+                                        <th style="width: 30%;">État</th>
+                                        <th style="width: 17%;">Observations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${piece.items.map(item => `
+                                        <tr>
+                                            <td><strong>${data.version_manuscrite ? '' : item.objet}</strong></td>
+                                            <td style="text-align: center;">${data.version_manuscrite ? '' : item.quantite}</td>
+                                            <td>${data.version_manuscrite ? '' : item.description}</td>
+                                            <td>
+                                                ${data.version_manuscrite ? 
+                                                    `<span class="checkbox-print">☐</span> Très Bon &nbsp;&nbsp;
+                                                     <span class="checkbox-print">☐</span> Bon &nbsp;&nbsp;
+                                                     <span class="checkbox-print">☐</span> Moyen &nbsp;&nbsp;
+                                                     <span class="checkbox-print">☐</span> Usagé` :
+                                                    `<span class="checkbox-print">${item.etat === 'tb' ? '☑' : '☐'}</span> Très Bon &nbsp;&nbsp;
+                                                     <span class="checkbox-print">${item.etat === 'bon' ? '☑' : '☐'}</span> Bon &nbsp;&nbsp;
+                                                     <span class="checkbox-print">${item.etat === 'moyen' ? '☑' : '☐'}</span> Moyen &nbsp;&nbsp;
+                                                     <span class="checkbox-print">${item.etat === 'usage' ? '☑' : '☐'}</span> Usagé`
+                                                }
+                                            </td>
+                                            <td style="font-size: 10px;">${data.version_manuscrite ? '' : item.observations}</td>
+                                        </tr>
+                                    `).join('')}
+                                    ${data.version_manuscrite && piece.items.length < 3 ? generateEmptyRows(3 - piece.items.length) : ''}
+                                </tbody>
+                            </table>
+                        `).join('')}
+                    </div>
+
+                    ${data.observations_generales || data.version_manuscrite ? `
+                    <div class="section">
+                        <div class="section-title">OBSERVATIONS GÉNÉRALES</div>
+                        ${data.version_manuscrite ? '<p>____________________</p><p>____________________</p><p>____________________</p>' : ''}
+                        ${!data.version_manuscrite && data.observations_generales ? `<p>${data.observations_generales}</p>` : ''}
+                    </div>
+                    ` : ''}
+
+                    <div class="signatures">
+                        <div class="signature-box">
+                            <strong>LE BAILLEUR</strong><br>
+                            <em>Lu et approuvé</em><br>
+                            <em>Reconnaît la conformité de cet inventaire</em>
+                            <div class="signature-line"></div>
+                            <em>${data.version_manuscrite ? '' : data.bailleur_nom}</em>
+                        </div>
+                        <div class="signature-box">
+                            <strong>LE LOCATAIRE</strong><br>
+                            <em>Lu et approuvé</em><br>
+                            <em>Reconnaît la conformité de cet inventaire</em>
+                            <div class="signature-line"></div>
+                            <em>${data.version_manuscrite ? '' : data.locataire_nom}</em>
+                        </div>
+                        ${data.expert_present || data.version_manuscrite ? `
+                        <div class="signature-box">
+                            <strong>L'EXPERT</strong><br>
+                            <em>Lu et approuvé</em><br>
+                            <em>Certifie la réalisation de cet inventaire</em>
+                            <div class="signature-line"></div>
+                            <em>${data.version_manuscrite ? '' : (data.expert_nom || '')}</em>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #666;">
+                        <strong>Fait le ${data.version_manuscrite ? '____________________' : formatDate(data.date_inventaire)}</strong><br>
+                        <strong>En deux exemplaires originaux</strong><br>
+                        <em>Cet inventaire fait partie intégrante du contrat de bail et doit être conservé pendant toute la durée de la location.</em>
+                    </p>
+                </div>
+            `;
+        }
+
+        function generateEmptyRows(count) {
+            let rows = '';
+            for (let i = 0; i < count; i++) {
+                rows += `<tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="checkbox-print">☐</span> Très Bon &nbsp;&nbsp;
+                        <span class="checkbox-print">☐</span> Bon &nbsp;&nbsp;
+                        <span class="checkbox-print">☐</span> Moyen &nbsp;&nbsp;
+                        <span class="checkbox-print">☐</span> Usagé
+                    </td>
+                    <td></td>
+                </tr>`;
+            }
+            return rows;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function saveInventaire() {
+            const data = collectFormData();
+            const typeText = data.type_inventaire === 'entree' ? 'entree' : 
+                            data.type_inventaire === 'sortie' ? 'sortie' : 'controle';
+            const filename = `inventaire_${typeText}_${data.numero_inventaire.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = filename;
+            link.click();
+        }
+
+        function loadInventaire() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier : ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function fillFormData(data) {
+            // Remplir les champs simples
+            Object.keys(data).forEach(key => {
+                if (key !== 'pieces') {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = data[key];
+                            element.dispatchEvent(new Event('change'));
+                        } else {
+                            element.value = data[key];
+                        }
+                    }
+                }
+            });
+            
+            // Gérer les pièces
+            if (data.pieces && data.pieces.length > 0) {
+                // Supprimer toutes les pièces sauf la première
+                const container = document.getElementById('pieces-container');
+                const pieces = container.querySelectorAll('.piece-block');
+                for (let i = pieces.length - 1; i > 0; i--) {
+                    pieces[i].remove();
+                }
+                pieceCount = 1;
+                
+                // Remplir les données des pièces
+                data.pieces.forEach((pieceData, index) => {
+                    if (index > 0) {
+                        addPiece();
+                    }
+                    
+                    const pieceId = index + 1;
+                    const nomInput = document.getElementById(`piece${pieceId}_nom`);
+                    if (nomInput) nomInput.value = pieceData.nom;
+                    
+                    // Remplir les items de la pièce
+                    const itemsContainer = document.getElementById(`piece${pieceId}_items`);
+                    if (itemsContainer && pieceData.items) {
+                        // Vider les items existants
+                        itemsContainer.innerHTML = '';
+                        
+                        pieceData.items.forEach(itemData => {
+                            const itemBlock = document.createElement('div');
+                            itemBlock.className = 'item-block';
+                            itemBlock.innerHTML = `
+                                <div class="item-name">
+                                    <input type="text" value="${itemData.objet}" placeholder="Nom de l'objet">
+                                </div>
+                                <div class="item-details">
+                                    <input type="number" value="${itemData.quantite}" min="0" class="quantity-input" placeholder="Qté" title="Quantité">
+                                    <input type="text" value="${itemData.description}" placeholder="Description détaillée" title="Description">
+                                    <textarea placeholder="Matériau, couleur, marque..." title="Observations détaillées">${itemData.observations}</textarea>
+                                </div>
+                                <div class="etat-checkboxes">
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="tb" ${itemData.etat === 'tb' ? 'checked' : ''}>
+                                        <span class="tres-bon-etat">Très Bon</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="bon" ${itemData.etat === 'bon' ? 'checked' : ''}>
+                                        <span class="bon-etat">Bon</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="moyen" ${itemData.etat === 'moyen' ? 'checked' : ''}>
+                                        <span class="moyen-etat">Moyen</span>
+                                    </div>
+                                    <div class="checkbox-option">
+                                        <input type="checkbox" class="etat-checkbox" data-etat="usage" ${itemData.etat === 'usage' ? 'checked' : ''}>
+                                        <span class="usage-etat">Usagé</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="delete-item" onclick="removeItem(this)">🗑️</button>
+                            `;
+                            itemsContainer.appendChild(itemBlock);
+                        });
+                    }
+                });
+            }
+
+            attachCheckboxListeners();
+        }
+
+        // Initialiser au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            attachCheckboxListeners();
+        });
+    </script>
+</body>
+</html>

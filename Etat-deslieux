@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'État des Lieux</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #9b59b6;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #9b59b6;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #8e44ad;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #9b59b6;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 10px;
+            min-width: 150px;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 5px rgba(155, 89, 182, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            min-width: auto;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            min-width: auto;
+            width: auto;
+        }
+
+        .piece-block {
+            border: 2px solid #f4e6ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fdfbff;
+        }
+
+        .piece-block h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .element-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .element-row label {
+            min-width: auto;
+            margin: 0;
+        }
+
+        .element-row select {
+            min-width: auto;
+        }
+
+        .element-row textarea {
+            min-height: 40px;
+            min-width: auto;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .important-notice {
+            background-color: #f8f4ff;
+            border: 1px solid #d1c4e9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .important-notice h4 {
+            color: #7b1fa2;
+            margin-bottom: 10px;
+        }
+
+        .important-notice ul {
+            margin-left: 20px;
+            color: #7b1fa2;
+        }
+
+        .preview-mode {
+            display: none;
+        }
+
+        .preview-mode.active {
+            display: block;
+        }
+
+        .edit-mode.hidden {
+            display: none;
+        }
+
+        .etat-preview {
+            border: 2px solid #9b59b6;
+            padding: 30px;
+            margin: 20px 0;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .etat-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .etat-header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 30%;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 30px 0 10px 0;
+            height: 40px;
+        }
+
+        .piece-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .piece-table th,
+        .piece-table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .piece-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .compteurs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .compteurs-table th,
+        .compteurs-table td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .compteurs-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .mini-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 0;
+                margin: 0;
+            }
+            .header, .buttons, .edit-mode, .important-notice {
+                display: none !important;
+            }
+            .preview-mode {
+                display: block !important;
+            }
+            .etat-preview {
+                page-break-after: always;
+                margin: 0;
+                padding: 15px;
+                border: none;
+                background: white;
+                width: 100%;
+                min-height: 100vh;
+                font-size: 11pt;
+            }
+            .piece-table th,
+            .piece-table td {
+                font-size: 10px;
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GÉNÉRATEUR D'ÉTAT DES LIEUX</h1>
+            <h2>Entrée et Sortie de location</h2>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">INFORMATIONS GÉNÉRALES</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type d'état des lieux :</label>
+                        <select id="type_etat">
+                            <option value="entree">État des lieux d'entrée</option>
+                            <option value="sortie">État des lieux de sortie</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date :</label>
+                        <input type="date" id="date_etat">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Heure :</label>
+                    <input type="time" id="heure_etat">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOGEMENT CONCERNÉ</div>
+                <div class="form-group">
+                    <label>Adresse :</label>
+                    <textarea id="logement_adresse" placeholder="Adresse complète du logement"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Code postal :</label>
+                        <input type="text" id="logement_cp" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville :</label>
+                        <input type="text" id="logement_ville" placeholder="Paris">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type de logement :</label>
+                        <select id="logement_type">
+                            <option value="">Sélectionner</option>
+                            <option value="Studio">Studio</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="Maison">Maison</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Surface :</label>
+                        <input type="number" id="logement_surface" placeholder="m²">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PARTICIPANTS</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Bailleur :</label>
+                        <input type="text" id="bailleur_nom" placeholder="Nom et prénom du bailleur">
+                    </div>
+                    <div class="form-group">
+                        <label>Locataire :</label>
+                        <input type="text" id="locataire_nom" placeholder="Nom et prénom du locataire">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="expert_present" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Expert ou tiers présent
+                    </label>
+                </div>
+                <div class="form-group" id="expert_group" style="display: none;">
+                    <label>Nom de l'expert :</label>
+                    <input type="text" id="expert_nom" placeholder="Nom et qualité de l'expert">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PIÈCES DU LOGEMENT</div>
+                <div class="important-notice" style="margin-bottom: 20px;">
+                    <h4>🚀 Sélection rapide des pièces courantes</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Entrée" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Entrée
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Salon" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Salon
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Cuisine" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Cuisine
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Chambre 1" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Chambre 1
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Chambre 2" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Chambre 2
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Chambre 3" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Chambre 3
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Salle de bain" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Salle de bain
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="WC" style="margin-right: 8px; width: auto; min-width: auto;">
+                            WC
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Dressing" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Dressing
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Balcon" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Balcon
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Terrasse" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Terrasse
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" class="piece-checkbox" data-piece="Cave" style="margin-right: 8px; width: auto; min-width: auto;">
+                            Cave
+                        </label>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button type="button" class="btn btn-success" onclick="generateSelectedPieces()">✨ Générer les pièces sélectionnées</button>
+                        <button type="button" class="btn btn-info" onclick="clearAllPieces()" style="margin-left: 10px;">🗑️ Tout effacer</button>
+                    </div>
+                </div>
+                <div id="pieces-container">
+                    <div class="piece-block" data-piece="1" style="display: none;">
+                        <h4>
+                            <span>Pièce 1</span>
+                            <div>
+                                <input type="text" id="piece1_nom" placeholder="Nom de la pièce" style="width: 200px; margin-right: 10px;">
+                                <button type="button" class="mini-btn btn-warning" onclick="removePiece(1)" style="display: none;">🗑️</button>
+                            </div>
+                        </h4>
+                        <div id="piece1_elements">
+                            <div class="element-row">
+                                <label>Sols</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Murs</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Plafond</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Fenêtres</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Portes</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Électricité</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                            <div class="element-row">
+                                <label>Propreté</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon">Bon</option>
+                                    <option value="Moyen">Moyen</option>
+                                    <option value="Mauvais">Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées..."></textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="addElement(1)" style="margin-top: 10px;">➕ Ajouter un élément</button>
+                    </div>
+                </div>
+                <div class="buttons" style="margin-top: 15px;">
+                    <button class="btn btn-info" type="button" onclick="addPiece()">➕ Ajouter une pièce personnalisée</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">RELEVÉS DE COMPTEURS</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Électricité :</label>
+                        <input type="number" id="compteur_elec" placeholder="kWh">
+                    </div>
+                    <div class="form-group">
+                        <label>Eau :</label>
+                        <input type="number" id="compteur_eau" placeholder="m³">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">CLÉS</div>
+                <div class="form-group">
+                    <label>Nombre de clés :</label>
+                    <input type="number" id="nombre_cles" value="2" style="width: 100px;">
+                </div>
+                <div class="form-group">
+                    <label>Détail des clés :</label>
+                    <textarea id="detail_cles" placeholder="Ex: 2 clés d'entrée, 1 clé boîte aux lettres..."></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">OBSERVATIONS GÉNÉRALES</div>
+                <div class="form-group">
+                    <label>Observations importantes :</label>
+                    <textarea id="observations_generales" placeholder="Toute observation importante concernant l'état général du logement..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="travaux_prevus" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Travaux prévus ou en cours
+                    </label>
+                </div>
+                <div class="form-group" id="travaux_group" style="display: none;">
+                    <label>Détail des travaux :</label>
+                    <textarea id="detail_travaux" placeholder="Description des travaux prévus ou en cours..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-mode" id="preview">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+
+        <div class="important-notice">
+            <h4>📋 INFORMATIONS IMPORTANTES</h4>
+            <ul>
+                <li>L'état des lieux doit être contradictoire (présence des deux parties)</li>
+                <li>En cas de désaccord, faire appel à un expert</li>
+                <li>Conservez une copie de l'état des lieux pendant toute la durée du bail</li>
+                <li>L'état des lieux de sortie sera comparé à celui d'entrée</li>
+                <li>Pensez à prendre des photos pour compléter le document</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="previewEtat()">📄 Aperçu de l'état des lieux</button>
+            <button class="btn btn-info" onclick="editEtat()" style="display:none;" id="editBtn">✏️ Modifier</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="btn btn-primary" onclick="saveEtat()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadEtat()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        let pieceCount = 0;
+        let elementCount = 1;
+
+        // Gestion de l'affichage expert
+        document.getElementById('expert_present').addEventListener('change', function() {
+            document.getElementById('expert_group').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Gestion de l'affichage travaux
+        document.getElementById('travaux_prevus').addEventListener('change', function() {
+            document.getElementById('travaux_group').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Initialiser la date et l'heure actuelles
+        const now = new Date();
+        document.getElementById('date_etat').value = now.toISOString().split('T')[0];
+        document.getElementById('heure_etat').value = now.toTimeString().slice(0, 5);
+
+        function generateSelectedPieces() {
+            const selectedPieces = document.querySelectorAll('.piece-checkbox:checked');
+            if (selectedPieces.length === 0) {
+                alert('Veuillez sélectionner au moins une pièce.');
+                return;
+            }
+
+            // Effacer toutes les pièces existantes
+            clearAllPieces();
+
+            // Générer les pièces sélectionnées
+            selectedPieces.forEach((checkbox, index) => {
+                const pieceName = checkbox.dataset.piece;
+                createPieceWithName(pieceName);
+            });
+
+            // Décocher toutes les cases
+            selectedPieces.forEach(checkbox => checkbox.checked = false);
+        }
+
+        function clearAllPieces() {
+            const container = document.getElementById('pieces-container');
+            container.innerHTML = '';
+            pieceCount = 0;
+        }
+
+        function createPieceWithName(pieceName) {
+            pieceCount++;
+            const container = document.getElementById('pieces-container');
+            const newPiece = document.createElement('div');
+            newPiece.className = 'piece-block';
+            newPiece.setAttribute('data-piece', pieceCount);
+            
+            // Éléments spécifiques selon le type de pièce
+            const specificElements = getSpecificElements(pieceName);
+            
+            newPiece.innerHTML = `
+                <h4>
+                    <span>${pieceName}</span>
+                    <div>
+                        <input type="text" id="piece${pieceCount}_nom" value="${pieceName}" style="width: 200px; margin-right: 10px;">
+                        <button type="button" class="mini-btn btn-warning" onclick="removePiece(${pieceCount})">🗑️</button>
+                    </div>
+                </h4>
+                <div id="piece${pieceCount}_elements">
+                    ${specificElements}
+                </div>
+                <button type="button" class="btn btn-info" onclick="addElement(${pieceCount})" style="margin-top: 10px;">➕ Ajouter un élément</button>
+            `;
+            
+            container.appendChild(newPiece);
+            newPiece.style.display = 'block';
+        }
+
+        function getSpecificElements(pieceName) {
+            const baseElements = `
+                <div class="element-row">
+                    <label>Sols</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Murs</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Plafond</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Fenêtres</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Portes</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Électricité</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+                <div class="element-row">
+                    <label>Propreté</label>
+                    <select class="etat-select">
+                        <option value="">-</option>
+                        <option value="Bon">Bon</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Mauvais">Mauvais</option>
+                    </select>
+                    <textarea placeholder="Observations détaillées..."></textarea>
+                </div>
+            `;
+
+            let specificElements = '';
+
+            switch (pieceName.toLowerCase()) {
+                case 'cuisine':
+                    specificElements = `
+                        <div class="element-row">
+                            <label>Évier/Robinetterie</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Plaques de cuisson</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Four</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Réfrigérateur</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Placards</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'salle de bain':
+                    specificElements = `
+                        <div class="element-row">
+                            <label>Baignoire/Douche</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Lavabo</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Robinetterie</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Carrelage</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Miroir</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'wc':
+                    specificElements = `
+                        <div class="element-row">
+                            <label>Cuvette WC</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Réservoir</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Carrelage</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'balcon':
+                case 'terrasse':
+                    specificElements = `
+                        <div class="element-row">
+                            <label>Revêtement sol</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Garde-corps</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                        <div class="element-row">
+                            <label>Étanchéité</label>
+                            <select class="etat-select"><option value="">-</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Mauvais">Mauvais</option></select>
+                            <textarea placeholder="Observations détaillées..."></textarea>
+                        </div>
+                    `;
+                    break;
+            }
+
+            return baseElements + specificElements;
+        }
+
+        function addPiece() {
+            pieceCount++;
+            const container = document.getElementById('pieces-container');
+            const newPiece = document.createElement('div');
+            newPiece.className = 'piece-block';
+            newPiece.setAttribute('data-piece', pieceCount);
+            
+            newPiece.innerHTML = `
+                <h4>
+                    <span>Pièce ${pieceCount}</span>
+                    <div>
+                        <input type="text" id="piece${pieceCount}_nom" placeholder="Nom de la pièce" style="width: 200px; margin-right: 10px;">
+                        <button type="button" class="mini-btn btn-warning" onclick="removePiece(${pieceCount})">🗑️</button>
+                    </div>
+                </h4>
+                <div id="piece${pieceCount}_elements">
+                    <div class="element-row">
+                        <label>Sols</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Murs</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Plafond</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Fenêtres</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Portes</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Électricité</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                    <div class="element-row">
+                        <label>Propreté</label>
+                        <select class="etat-select">
+                            <option value="">-</option>
+                            <option value="Bon">Bon</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Mauvais">Mauvais</option>
+                        </select>
+                        <textarea placeholder="Observations détaillées..."></textarea>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info" onclick="addElement(${pieceCount})" style="margin-top: 10px;">➕ Ajouter un élément</button>
+            `;
+            
+            container.appendChild(newPiece);
+        }
+
+        function removePiece(pieceId) {
+            const piece = document.querySelector(`[data-piece="${pieceId}"]`);
+            if (piece) {
+                piece.remove();
+            }
+        }
+
+        function addElement(pieceId) {
+            const container = document.getElementById(`piece${pieceId}_elements`);
+            const newElement = document.createElement('div');
+            newElement.className = 'element-row';
+            
+            newElement.innerHTML = `
+                <input type="text" placeholder="Nom de l'élément" style="width: 100%;">
+                <select class="etat-select">
+                    <option value="">-</option>
+                    <option value="Bon">Bon</option>
+                    <option value="Moyen">Moyen</option>
+                    <option value="Mauvais">Mauvais</option>
+                </select>
+                <textarea placeholder="Observations détaillées..."></textarea>
+            `;
+            
+            container.appendChild(newElement);
+        }
+
+        function previewEtat() {
+            const formData = collectFormData();
+            const preview = document.getElementById('preview');
+            
+            preview.innerHTML = generateEtatHTML(formData);
+            
+            document.querySelector('.edit-mode').classList.add('hidden');
+            document.querySelector('.preview-mode').classList.add('active');
+            document.getElementById('editBtn').style.display = 'inline-block';
+        }
+
+        function editEtat() {
+            document.querySelector('.edit-mode').classList.remove('hidden');
+            document.querySelector('.preview-mode').classList.remove('active');
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function collectFormData() {
+            const data = {
+                type_etat: document.getElementById('type_etat').value,
+                date_etat: document.getElementById('date_etat').value,
+                heure_etat: document.getElementById('heure_etat').value,
+                
+                logement_adresse: document.getElementById('logement_adresse').value,
+                logement_cp: document.getElementById('logement_cp').value,
+                logement_ville: document.getElementById('logement_ville').value,
+                logement_type: document.getElementById('logement_type').value,
+                logement_surface: document.getElementById('logement_surface').value,
+                
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                locataire_nom: document.getElementById('locataire_nom').value,
+                expert_present: document.getElementById('expert_present').checked,
+                expert_nom: document.getElementById('expert_nom').value,
+                
+                compteur_elec: document.getElementById('compteur_elec').value,
+                compteur_eau: document.getElementById('compteur_eau').value,
+                
+                nombre_cles: document.getElementById('nombre_cles').value,
+                detail_cles: document.getElementById('detail_cles').value,
+                
+                observations_generales: document.getElementById('observations_generales').value,
+                travaux_prevus: document.getElementById('travaux_prevus').checked,
+                detail_travaux: document.getElementById('detail_travaux').value,
+                
+                pieces: []
+            };
+            
+            // Collecte des données des pièces
+            const pieces = document.querySelectorAll('.piece-block');
+            pieces.forEach((piece) => {
+                const pieceId = piece.getAttribute('data-piece');
+                const nomInput = piece.querySelector(`#piece${pieceId}_nom`) || piece.querySelector('input[type="text"]');
+                const pieceData = {
+                    nom: nomInput?.value || `Pièce ${pieceId}`,
+                    elements: []
+                };
+                
+                const elements = piece.querySelectorAll('.element-row');
+                elements.forEach(element => {
+                    const label = element.querySelector('label') || element.querySelector('input[type="text"]');
+                    const etat = element.querySelector('.etat-select');
+                    const observation = element.querySelector('textarea');
+                    
+                    if (label && etat && observation) {
+                        pieceData.elements.push({
+                            nom: label.textContent || label.value || '',
+                            etat: etat.value,
+                            observation: observation.value
+                        });
+                    }
+                });
+                
+                data.pieces.push(pieceData);
+            });
+            
+            return data;
+        }
+
+        function generateEtatHTML(data) {
+            const typeText = data.type_etat === 'entree' ? 'D\'ENTRÉE' : 'DE SORTIE';
+            
+            return `
+                <div class="etat-preview">
+                    <div class="etat-header">
+                        <h1>ÉTAT DES LIEUX ${typeText}</h1>
+                        <p><strong>Date :</strong> ${formatDate(data.date_etat)} à ${data.heure_etat}</p>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">LOGEMENT CONCERNÉ</div>
+                        <p><strong>Adresse :</strong> ${data.logement_adresse}</p>
+                        <p><strong>Code postal :</strong> ${data.logement_cp} <strong>Ville :</strong> ${data.logement_ville}</p>
+                        <p><strong>Type :</strong> ${data.logement_type} <strong>Surface :</strong> ${data.logement_surface} m²</p>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">PARTICIPANTS</div>
+                        <p><strong>Bailleur :</strong> ${data.bailleur_nom}</p>
+                        <p><strong>Locataire :</strong> ${data.locataire_nom}</p>
+                        ${data.expert_present ? `<p><strong>Expert :</strong> ${data.expert_nom}</p>` : ''}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">ÉTAT DES PIÈCES</div>
+                        ${data.pieces.map(piece => `
+                            <h4>${piece.nom}</h4>
+                            <table class="piece-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 25%;">Élément</th>
+                                        <th style="width: 15%;">État</th>
+                                        <th style="width: 60%;">Observations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${piece.elements.map(element => `
+                                        <tr>
+                                            <td>${element.nom}</td>
+                                            <td>${element.etat}</td>
+                                            <td>${element.observation}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `).join('')}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">RELEVÉS DE COMPTEURS</div>
+                        <table class="compteurs-table">
+                            <thead>
+                                <tr>
+                                    <th>Électricité (kWh)</th>
+                                    <th>Eau (m³)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${data.compteur_elec || '-'}</td>
+                                    <td>${data.compteur_eau || '-'}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">CLÉS</div>
+                        <p><strong>Nombre de clés remises :</strong> ${data.nombre_cles}</p>
+                        ${data.detail_cles ? `<p><strong>Détail :</strong> ${data.detail_cles}</p>` : ''}
+                    </div>
+
+                    ${data.observations_generales || data.travaux_prevus ? `
+                    <div class="section">
+                        <div class="section-title">OBSERVATIONS GÉNÉRALES</div>
+                        ${data.observations_generales ? `<p>${data.observations_generales}</p>` : ''}
+                        ${data.travaux_prevus ? `<p><strong>Travaux prévus/en cours :</strong> ${data.detail_travaux}</p>` : ''}
+                    </div>
+                    ` : ''}
+
+                    <div class="signatures">
+                        <div class="signature-box">
+                            <strong>LE BAILLEUR</strong><br>
+                            <em>Lu et approuvé</em>
+                            <div class="signature-line"></div>
+                            <em>${data.bailleur_nom}</em>
+                        </div>
+                        <div class="signature-box">
+                            <strong>LE LOCATAIRE</strong><br>
+                            <em>Lu et approuvé</em>
+                            <div class="signature-line"></div>
+                            <em>${data.locataire_nom}</em>
+                        </div>
+                        ${data.expert_present ? `
+                        <div class="signature-box">
+                            <strong>L'EXPERT</strong><br>
+                            <em>Lu et approuvé</em>
+                            <div class="signature-line"></div>
+                            <em>${data.expert_nom}</em>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <p style="text-align: center; margin-top: 30px;">
+                        <strong>Fait le ${formatDate(data.date_etat)} à ${data.heure_etat}</strong><br>
+                        <strong>En deux exemplaires originaux</strong>
+                    </p>
+                </div>
+            `;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function saveEtat() {
+            const data = collectFormData();
+            const typeText = data.type_etat === 'entree' ? 'entree' : 'sortie';
+            const filename = `etat_lieux_${typeText}_${data.date_etat}.json`;
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = filename;
+            link.click();
+        }
+
+        function loadEtat() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function fillFormData(data) {
+            // Remplir les champs simples
+            Object.keys(data).forEach(key => {
+                if (key !== 'pieces') {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = data[key];
+                            element.dispatchEvent(new Event('change'));
+                        } else {
+                            element.value = data[key];
+                        }
+                    }
+                }
+            });
+            
+            // Gérer les pièces
+            if (data.pieces && data.pieces.length > 0) {
+                // Effacer toutes les pièces existantes
+                clearAllPieces();
+                
+                // Recréer les pièces avec leurs données
+                data.pieces.forEach((pieceData) => {
+                    createPieceWithName(pieceData.nom);
+                    
+                    // Remplir les éléments de la pièce
+                    const currentPieceId = pieceCount;
+                    const elementsContainer = document.getElementById(`piece${currentPieceId}_elements`);
+                    if (elementsContainer && pieceData.elements) {
+                        // Vider les éléments existants
+                        elementsContainer.innerHTML = '';
+                        
+                        pieceData.elements.forEach(elementData => {
+                            const elementRow = document.createElement('div');
+                            elementRow.className = 'element-row';
+                            elementRow.innerHTML = `
+                                <label>${elementData.nom}</label>
+                                <select class="etat-select">
+                                    <option value="">-</option>
+                                    <option value="Bon" ${elementData.etat === 'Bon' ? 'selected' : ''}>Bon</option>
+                                    <option value="Moyen" ${elementData.etat === 'Moyen' ? 'selected' : ''}>Moyen</option>
+                                    <option value="Mauvais" ${elementData.etat === 'Mauvais' ? 'selected' : ''}>Mauvais</option>
+                                </select>
+                                <textarea placeholder="Observations détaillées...">${elementData.observation}</textarea>
+                            `;
+                            elementsContainer.appendChild(elementRow);
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur d'Inventaire des Meubles</title>
+<style>
+/* --- Styles principaux --- */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; line-height:1.6; color:#333; background-color:#f5f5f5; padding:20px;}
+.container { max-width:1200px; margin:0 auto; background:white; padding:30px; box-shadow:0 0 20px rgba(0,0,0,0.1); border-radius:10px;}
+.header { text-align:center; margin-bottom:30px; border-bottom:3px solid #9b59b6; padding-bottom:20px;}
+.header h1 { color:#9b59b6; font-size:28px; margin-bottom:10px;}
+.header h2 { color:#8e44ad; font-size:20px; font-weight:normal;}
+.section { margin:25px 0; padding:20px; border:1px solid #ecf0f1; border-radius:8px; background-color:#fdfdfd;}
+.section-title { font-size:18px; font-weight:bold; color:#2c3e50; margin-bottom:15px; border-bottom:2px solid #9b59b6; padding-bottom:5px;}
+.piece-block { border:2px solid #f4e6ff; border-radius:8px; padding:20px; margin-bottom:20px; background-color:#fdfbff;}
+.piece-block h4 { color:#2c3e50; margin-bottom:15px; border-bottom:1px solid #bdc3c7; padding-bottom:5px; display:flex; justify-content:space-between; align-items:center;}
+.item-table { width:100%; border-collapse:collapse; margin:15px 0;}
+.item-table th, .item-table td { border:1px solid #bdc3c7; padding:8px; text-align:left; font-size:14px;}
+.item-table th { background-color:#f8f9fa; font-weight:bold;}
+.item-table input, .item-table select, .item-table textarea { width:100%; border:none; padding:4px; font-size:12px; background:transparent;}
+.item-table textarea { min-height:30px; resize:vertical;}
+.delete-row { background:#e74c3c; color:white; border:none; padding:2px 6px; border-radius:3px; cursor:pointer; font-size:12px;}
+.delete-row:hover { background:#c0392b;}
+.buttons { margin-top:30px; text-align:center; display:flex; gap:15px; justify-content:center; flex-wrap:wrap;}
+.btn { padding:12px 25px; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:600; transition:all 0.3s ease; text-decoration:none; display:inline-block;}
+.btn-primary { background-color:#9b59b6; color:white;}
+.btn-primary:hover { background-color:#8e44ad; transform:translateY(-2px);}
+.btn-success { background-color:#27ae60; color:white;}
+.btn-success:hover { background-color:#229954; transform:translateY(-2px);}
+.btn-info { background-color:#17a2b8; color:white;}
+.btn-info:hover { background-color:#138496; transform:translateY(-2px);}
+.btn-warning { background-color:#f39c12; color:white;}
+.btn-warning:hover { background-color:#e67e22; transform:translateY(-2px);}
+.preview-mode { display:none;}
+.preview-mode.active { display:block;}
+.edit-mode.hidden { display:none;}
+.totals-section { background-color:#e8f5e8; padding:15px; margin:15px 0; border-radius:5px; border:1px solid #27ae60;}
+.totals-section h5 { color:#27ae60; margin-bottom:10px;}
+@media print {
+  .header, .buttons, .edit-mode, .important-notice { display:none!important; }
+  .preview-mode { display:block!important;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>GÉNÉRATEUR D'INVENTAIRE</h1>
+    <h2>Inventaire détaillé du mobilier et des équipements</h2>
+  </div>
+
+  <div class="edit-mode">
+    <div class="section">
+      <div class="section-title">INVENTAIRE PAR PIÈCES</div>
+
+      <div class="template-section" style="margin-bottom:20px;">
+        <button class="btn btn-info" onclick="loadTemplate('studio')">Studio meublé</button>
+        <button class="btn btn-info" onclick="loadTemplate('t2')">T2 meublé</button>
+        <button class="btn btn-info" onclick="loadTemplate('t3')">T3 meublé</button>
+        <button class="btn btn-warning" onclick="loadTemplate('vide')">Effacer tout</button>
+      </div>
+
+      <div id="pieces-container">
+        <!-- Pièce initiale -->
+      </div>
+      <div class="buttons" style="margin-top:15px;">
+        <button class="btn btn-info" type="button" onclick="addPiece()">➕ Ajouter une pièce</button>
+      </div>
+      <div class="totals-section">
+        <h5>📊 Récapitulatif</h5>
+        <p><strong>Total des objets :</strong> <span id="total-items">0</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview-mode" id="preview"></div>
+</div>
+
+<script>
+let pieceCount = 0;
+const templates = {
+  studio: { pieces: [{ nom: "Studio", items: [
+    { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "Bon", observations: "" },
+    { objet: "Table", quantite: 1, description: "Table pliante", etat: "Bon", observations: "" },
+    { objet: "Chaise", quantite: 2, description: "Chaises en bois", etat: "Bon", observations: "" },
+    { objet: "Armoire", quantite: 1, description: "Armoire 2 portes", etat: "Bon", observations: "" },
+    { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur 120L", etat: "Bon", observations: "" },
+    { objet: "Plaque de cuisson", quantite: 1, description: "Plaque électrique 2 feux", etat: "Bon", observations: "" },
+    { objet: "Micro-ondes", quantite: 1, description: "Micro-ondes 20L", etat: "Bon", observations: "" }
+  ]}]},
+  t2: { pieces: [
+    { nom: "Salon", items: [
+      { objet: "Canapé", quantite: 1, description: "Canapé 3 places", etat: "Bon", observations: "" },
+      { objet: "Table basse", quantite: 1, description: "Table basse en verre", etat: "Bon", observations: "" },
+      { objet: "Télévision", quantite: 1, description: "TV LED 32 pouces", etat: "Bon", observations: "" },
+      { objet: "Étagère", quantite: 1, description: "Bibliothèque 5 niveaux", etat: "Bon", observations: "" }
+    ]},
+    { nom: "Chambre", items: [
+      { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "Bon", observations: "" },
+      { objet: "Armoire", quantite: 1, description: "Armoire 3 portes", etat: "Bon", observations: "" },
+      { objet: "Commode", quantite: 1, description: "Commode 4 tiroirs", etat: "Bon", observations: "" }
+    ]},
+    { nom: "Cuisine", items: [
+      { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur 200L", etat: "Bon", observations: "" },
+      { objet: "Four", quantite: 1, description: "Four électrique encastrable", etat: "Bon", observations: "" },
+      { objet: "Lave-vaisselle", quantite: 1, description: "Lave-vaisselle 12 couverts", etat: "Bon", observations: "" },
+      { objet: "Table", quantite: 1, description: "Table cuisine 4 personnes", etat: "Bon", observations: "" },
+      { objet: "Chaise", quantite: 4, description: "Chaises cuisine", etat: "Bon", observations: "" }
+    ]}
+  ]},
+  t3: { pieces: [
+    { nom: "Salon", items: [
+      { objet: "Canapé", quantite: 1, description: "Canapé d'angle", etat: "Bon", observations: "" },
+      { objet: "Fauteuil", quantite: 2, description: "Fauteuils assortis", etat: "Bon", observations: "" },
+      { objet: "Table basse", quantite: 1, description: "Table basse bois massif", etat: "Bon", observations: "" },
+      { objet: "Télévision", quantite: 1, description: "TV LED 43 pouces", etat: "Bon", observations: "" },
+      { objet: "Meuble TV", quantite: 1, description: "Meuble TV avec rangements", etat: "Bon", observations: "" }
+    ]},
+    { nom: "Chambre 1", items: [
+      { objet: "Lit", quantite: 1, description: "Lit 160x200 avec matelas", etat: "Bon", observations: "" },
+      { objet: "Armoire", quantite: 1, description: "Armoire penderie 3 portes", etat: "Bon", observations: "" },
+      { objet: "Commode", quantite: 1, description: "Commode 6 tiroirs", etat: "Bon", observations: "" },
+      { objet: "Table de chevet", quantite: 2, description: "Tables de chevet assorties", etat: "Bon", observations: "" }
+    ]},
+    { nom: "Chambre 2", items: [
+      { objet: "Lit", quantite: 1, description: "Lit 140x190 avec matelas", etat: "Bon", observations: "" },
+      { objet: "Armoire", quantite: 1, description: "Armoire 2 portes", etat: "Bon", observations: "" },
+      { objet: "Bureau", quantite: 1, description: "Bureau avec tiroirs", etat: "Bon", observations: "" },
+      { objet: "Chaise", quantite: 1, description: "Chaise de bureau", etat: "Bon", observations: "" }
+    ]},
+    { nom: "Cuisine", items: [
+      { objet: "Réfrigérateur", quantite: 1, description: "Réfrigérateur américain", etat: "Bon", observations: "" },
+      { objet: "Four", quantite: 1, description: "Four pyrolyse encastrable", etat: "Bon", observations: "" },
+      { objet: "Plaque de cuisson", quantite: 1, description: "Plaque induction 4 feux", etat: "Bon", observations: "" },
+      { objet: "Lave-vaisselle", quantite: 1, description: "Lave-vaisselle encastrable", etat: "Bon", observations: "" },
+      { objet: "Lave-linge", quantite: 1, description: "Lave-linge 8kg", etat: "Bon", observations: "" },
+      { objet: "Table", quantite: 1, description: "Table salle à manger 6 personnes", etat: "Bon", observations: "" },
+      { objet: "Chaise", quantite: 6, description: "Chaises salle à manger", etat: "Bon", observations: "" }
+    ]}
+  ]}
+};
+
+function attachUpdateEvents(){
+  document.querySelectorAll('.edit-mode .item-table input[type="number"]').forEach(input=>{
+    input.removeEventListener('change', updateTotals);
+    input.removeEventListener('input', updateTotals);
+    input.addEventListener('change', updateTotals);
+    input.addEventListener('input', updateTotals);
+  });
+}
+function updateTotals(){
+  let totalItems=0;
+  document.querySelectorAll('.item-table tbody tr').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    if(inputs.length>=2){
+      const name=inputs[0].value.trim();
+      const qty=parseInt(inputs[1].value)||0;
+      if(name) totalItems+=qty;
+    }
+  });
+  document.getElementById('total-items').textContent=totalItems;
+}
+function addPiece(){
+  pieceCount++;
+  const container=document.getElementById('pieces-container');
+  const newPiece=document.createElement('div');
+  newPiece.className='piece-block';
+  newPiece.setAttribute('data-piece', pieceCount);
+  newPiece.innerHTML=`
+    <h4><span>Pièce ${pieceCount}</span><div><input type="text" id="piece${pieceCount}_nom" placeholder="Nom de la pièce" style="width:200px;margin-right:10px;"></div></h4>
+    <div id="piece${pieceCount}_items"><table class="item-table"><thead><tr>
+      <th style="width:20%;">Objet</th>
+      <th style="width:8%;">Qté</th>
+      <th style="width:25%;">Description</th>
+      <th style="width:12%;">État</th>
+      <th style="width:25%;">Observations</th>
+      <th style="width:5%;">❌</th>
+    </tr></thead><tbody>
+      <tr>
+        <td><input type="text" placeholder="Ex: Table"></td>
+        <td><input type="number" value="1" min="0"></td>
+        <td><input type="text" placeholder="Ex: Table ronde en bois"></td>
+        <td><select>
+          <option value="">-</option><option value="Neuf">Neuf</option><option value="Très bon">Très bon</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Usé">Usé</option><option value="Mauvais">Mauvais</option>
+        </select></td>
+        <td><textarea placeholder="Rayures, taches..."></textarea></td>
+        <td><button type="button" class="delete-row" onclick="removeRow(this)">🗑️</button></td>
+      </tr>
+    </tbody></table></div>
+    <button type="button" class="btn btn-info" onclick="addItem(${pieceCount})" style="margin-top:10px;">➕ Ajouter un objet</button>
+  `;
+  container.appendChild(newPiece);
+  attachUpdateEvents();
+  updateTotals();
+}
+function addItem(pieceId){
+  const tbody=document.querySelector(`#piece${pieceId}_items tbody`);
+  const newRow=document.createElement('tr');
+  newRow.innerHTML=`
+    <td><input type="text" placeholder="Ex: Table"></td>
+    <td><input type="number" value="1" min="0"></td>
+    <td><input type="text" placeholder="Ex: Table ronde en bois"></td>
+    <td><select>
+      <option value="">-</option><option value="Neuf">Neuf</option><option value="Très bon">Très bon</option><option value="Bon">Bon</option><option value="Moyen">Moyen</option><option value="Usé">Usé</option><option value="Mauvais">Mauvais</option>
+    </select></td>
+    <td><textarea placeholder="Rayures, taches..."></textarea></td>
+    <td><button type="button" class="delete-row" onclick="removeRow(this)">🗑️</button></td>
+  `;
+  tbody.appendChild(newRow);
+  attachUpdateEvents();
+  updateTotals();
+}
+function removeRow(btn){
+  btn.closest('tr').remove();
+  updateTotals();
+}
+function loadTemplate(name){
+  const container=document.getElementById('pieces-container');
+  container.innerHTML='';
+  pieceCount=0;
+  if(name==='vide'){ addPiece(); return; }
+  const tpl=templates[name];
+  if(!tpl) return;
+  tpl.pieces.forEach(piece=>{
+    addPiece();
+    document.getElementById(`piece${pieceCount}_nom`).value=piece.nom;
+    const tbody=document.querySelector(`#piece${pieceCount}_items tbody`);
+    tbody.innerHTML='';
+    piece.items.forEach(item=>{
+      const newRow=document.createElement('tr');
+      newRow.innerHTML=`
+        <td><input type="text" value="${item.objet}"></td>
+        <td><input type="number" value="${item.quantite}" min="0"></td>
+        <td><input type="text" value="${item.description}"></td>
+        <td><select>
+          <option value="">-</option>
+          <option value="Neuf" ${item.etat==='Neuf'?'selected':''}>Neuf</option>
+          <option value="Très bon" ${item.etat==='Très bon'?'selected':''}>Très bon</option>
+          <option value="Bon" ${item.etat==='Bon'?'selected':''}>Bon</option>
+          <option value="Moyen" ${item.etat==='Moyen'?'selected':''}>Moyen</option>
+          <option value="Usé" ${item.etat==='Usé'?'selected':''}>Usé</option>
+          <option value="Mauvais" ${item.etat==='Mauvais'?'selected':''}>Mauvais</option>
+        </select></td>
+        <td><textarea>${item.observations}</textarea></td>
+        <td><button type="button" class="delete-row" onclick="removeRow(this)">🗑️</button></td>
+      `;
+      tbody.appendChild(newRow);
+    });
+  });
+  attachUpdateEvents();
+  updateTotals();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  addPiece();
+});
+</script>
+</body>
+</html>

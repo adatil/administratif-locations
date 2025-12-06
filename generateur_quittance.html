@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Quittance de Loyer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #27ae60;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #2ecc71;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 10px;
+            min-width: 150px;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .amount-input {
+            width: 150px !important;
+            text-align: right;
+        }
+
+        .calculated {
+            background-color: #e8f5e8 !important;
+            font-weight: bold;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .important-notice {
+            background-color: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .important-notice h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .important-notice ul {
+            margin-left: 20px;
+            color: #27ae60;
+        }
+
+        .preview-mode {
+            display: none;
+        }
+
+        .preview-mode.active {
+            display: block;
+        }
+
+        .edit-mode.hidden {
+            display: none;
+        }
+
+        .quittance-preview {
+            border: 2px solid #27ae60;
+            padding: 30px;
+            margin: 20px 0;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .quittance-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quittance-header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .quittance-content {
+            margin: 20px 0;
+        }
+
+        .quittance-section {
+            margin-bottom: 20px;
+        }
+
+        .quittance-section h3 {
+            color: #27ae60;
+            border-bottom: 1px solid #27ae60;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .montants-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .montants-table th,
+        .montants-table td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .montants-table th {
+            background-color: #ecf0f1;
+            font-weight: bold;
+        }
+
+        .montants-table .total-row {
+            background-color: #e8f5e8;
+            font-weight: bold;
+        }
+
+        .signature-zone {
+            margin-top: 40px;
+            text-align: right;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            width: 200px;
+            margin: 40px 0 10px auto;
+            height: 40px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                font-size: 11pt;
+                line-height: 1.4;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 0;
+                margin: 0;
+            }
+            .header, .buttons, .edit-mode, .important-notice {
+                display: none !important;
+            }
+            .preview-mode {
+                display: block !important;
+            }
+            .quittance-preview {
+                page-break-after: always;
+                margin: 0;
+                padding: 15px;
+                border: none;
+                background: white;
+                width: 100%;
+                min-height: 100vh;
+                font-size: 11pt;
+            }
+            .quittance-preview:last-child {
+                page-break-after: auto;
+            }
+            .quittance-header h1 {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+            .quittance-section {
+                margin-bottom: 12px;
+            }
+            .quittance-section h3 {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            .montants-table {
+                margin: 12px 0;
+            }
+            .signature-zone {
+                margin-top: 25px;
+                page-break-inside: avoid;
+            }
+            .signature-line {
+                margin: 25px 0 8px auto;
+                height: 30px;
+            }
+            /* Masquer les séparateurs entre quittances à l'impression */
+            div[style*="page-break-after: always"][style*="border-top: 2px dashed"] {
+                display: none !important;
+            }
+        }
+
+        .month-year-input {
+            width: 120px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GÉNÉRATEUR DE QUITTANCE DE LOYER</h1>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">LE BAILLEUR</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom et prénom :</label>
+                        <input type="text" id="bailleur_nom" placeholder="NOM Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Qualité :</label>
+                        <select id="bailleur_qualite">
+                            <option value="Propriétaire">Propriétaire</option>
+                            <option value="Mandataire">Mandataire</option>
+                            <option value="Gérant">Gérant</option>
+                            <option value="Syndic">Syndic</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Adresse :</label>
+                    <textarea id="bailleur_adresse" placeholder="Adresse complète du bailleur"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone :</label>
+                        <input type="tel" id="bailleur_tel" placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" id="bailleur_email" placeholder="email@exemple.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Signature numérique :</label>
+                    <input type="file" id="signature_file" accept="image/*" style="margin-right: 10px;">
+                    <button type="button" onclick="clearSignature()" class="btn btn-info" style="padding: 6px 12px; font-size: 12px;">🗑️ Effacer</button>
+                </div>
+                <div id="signature_preview" style="display: none; margin-top: 10px; border: 1px solid #bdc3c7; padding: 10px; border-radius: 5px;">
+                    <p style="margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Aperçu de la signature :</p>
+                    <img id="signature_image" style="max-height: 80px; max-width: 300px;">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LE LOCATAIRE</div>
+                <div class="form-group">
+                    <label>Nom et prénom :</label>
+                    <input type="text" id="locataire_nom" placeholder="NOM Prénom du locataire">
+                </div>
+                <div class="form-group">
+                    <label>Adresse du locataire :</label>
+                    <textarea id="locataire_adresse" placeholder="Adresse du locataire (si différente du logement loué)"></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOGEMENT LOUÉ</div>
+                <div class="form-group">
+                    <label>Adresse du logement :</label>
+                    <textarea id="logement_adresse" placeholder="Adresse complète du logement loué"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Code postal :</label>
+                        <input type="text" id="logement_cp" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville :</label>
+                        <input type="text" id="logement_ville" placeholder="Paris">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Type de logement :</label>
+                    <select id="logement_type">
+                        <option value="">Sélectionner</option>
+                        <option value="Studio">Studio</option>
+                        <option value="T1">T1</option>
+                        <option value="T2">T2</option>
+                        <option value="T3">T3</option>
+                        <option value="T4">T4</option>
+                        <option value="T5">T5</option>
+                        <option value="Maison">Maison</option>
+                        <option value="Commerce">Local commercial</option>
+                        <option value="Bureau">Bureau</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PÉRIODE ET MONTANTS</div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="multi_mois" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Générer plusieurs mois consécutifs
+                    </label>
+                </div>
+                
+                <div id="single_month_group">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mois concerné :</label>
+                            <select id="mois_concerne">
+                                <option value="janvier">Janvier</option>
+                                <option value="février">Février</option>
+                                <option value="mars">Mars</option>
+                                <option value="avril">Avril</option>
+                                <option value="mai">Mai</option>
+                                <option value="juin">Juin</option>
+                                <option value="juillet">Juillet</option>
+                                <option value="août">Août</option>
+                                <option value="septembre">Septembre</option>
+                                <option value="octobre">Octobre</option>
+                                <option value="novembre">Novembre</option>
+                                <option value="décembre">Décembre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Année :</label>
+                            <input type="number" id="annee_concerne" value="2025" class="month-year-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="multi_month_group" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mois de début :</label>
+                            <select id="mois_debut">
+                                <option value="janvier">Janvier</option>
+                                <option value="février">Février</option>
+                                <option value="mars">Mars</option>
+                                <option value="avril">Avril</option>
+                                <option value="mai">Mai</option>
+                                <option value="juin">Juin</option>
+                                <option value="juillet">Juillet</option>
+                                <option value="août">Août</option>
+                                <option value="septembre">Septembre</option>
+                                <option value="octobre">Octobre</option>
+                                <option value="novembre">Novembre</option>
+                                <option value="décembre">Décembre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Année de début :</label>
+                            <input type="number" id="annee_debut" value="2025" class="month-year-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mois de fin :</label>
+                            <select id="mois_fin">
+                                <option value="janvier">Janvier</option>
+                                <option value="février">Février</option>
+                                <option value="mars">Mars</option>
+                                <option value="avril">Avril</option>
+                                <option value="mai">Mai</option>
+                                <option value="juin">Juin</option>
+                                <option value="juillet">Juillet</option>
+                                <option value="août">Août</option>
+                                <option value="septembre">Septembre</option>
+                                <option value="octobre">Octobre</option>
+                                <option value="novembre">Novembre</option>
+                                <option value="décembre">Décembre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Année de fin :</label>
+                            <input type="number" id="annee_fin" value="2025" class="month-year-input">
+                        </div>
+                    </div>
+                    <div class="important-notice" style="margin: 15px 0;">
+                        <p><strong>📌 Astuce :</strong> Vous pouvez générer jusqu'à 12 mois consécutifs. Les dates de paiement seront automatiquement ajustées pour chaque mois.</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Loyer :</label>
+                        <input type="number" id="loyer" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Charges :</label>
+                        <input type="number" id="charges" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Autres (parking, etc.) :</label>
+                        <input type="number" id="autres" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Total payé :</label>
+                        <input type="number" id="total_paye" placeholder="€" class="amount-input calculated" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Détail des charges :</label>
+                    <input type="text" id="detail_charges" placeholder="Eau, électricité, chauffage, ordures ménagères...">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DATES</div>
+                <div class="important-notice" style="margin-bottom: 15px;">
+                    <p><strong>💡 Dates intelligentes :</strong> Les dates de paiement s'ajustent automatiquement selon le mois de chaque quittance (ex: 5 de chaque mois = 5 janvier, 5 février, etc.)</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Jour de paiement :</label>
+                        <select id="jour_paiement_mois">
+                            <option value="1">1er de chaque mois</option>
+                            <option value="5" selected>5 de chaque mois</option>
+                            <option value="10">10 de chaque mois</option>
+                            <option value="15">15 de chaque mois</option>
+                            <option value="31">Dernier jour de chaque mois</option>
+                            <option value="custom">Date personnalisée</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="date_paiement_custom_group" style="display: none;">
+                        <label>Date de paiement :</label>
+                        <input type="date" id="date_paiement_custom">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date d'établissement :</label>
+                        <input type="date" id="date_etablissement">
+                    </div>
+                    <div class="form-group">
+                        <label>Lieu d'établissement :</label>
+                        <input type="text" id="lieu_etablissement" placeholder="Ville">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-mode" id="preview">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+
+        <div class="important-notice">
+            <h4>ℹ️ INFORMATIONS IMPORTANTES</h4>
+            <ul>
+                <li>La quittance de loyer est obligatoire si le locataire en fait la demande</li>
+                <li>Elle doit être gratuite</li>
+                <li>Elle atteste du paiement du loyer et des charges</li>
+                <li>Conservez une copie pour vos archives</li>
+                <li>Elle peut servir de justificatif de domicile pour le locataire</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="previewQuittance()">📄 Aperçu des quittances</button>
+            <button class="btn btn-info" onclick="editQuittance()" style="display:none;" id="editBtn">✏️ Modifier</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer tout</button>
+            <button class="btn btn-primary" onclick="saveQuittance()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadQuittance()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        let signatureDataUrl = null;
+
+        // Gestion de l'upload de signature
+        document.getElementById('signature_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    signatureDataUrl = e.target.result;
+                    document.getElementById('signature_image').src = signatureDataUrl;
+                    document.getElementById('signature_preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearSignature() {
+            signatureDataUrl = null;
+            document.getElementById('signature_file').value = '';
+            document.getElementById('signature_preview').style.display = 'none';
+        }
+
+        // Gestion de l'affichage multi-mois
+        document.getElementById('multi_mois').addEventListener('change', function() {
+            const singleGroup = document.getElementById('single_month_group');
+            const multiGroup = document.getElementById('multi_month_group');
+            
+            if (this.checked) {
+                singleGroup.style.display = 'none';
+                multiGroup.style.display = 'block';
+                
+                // Initialiser les valeurs par défaut
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                const months = [
+                    'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                    'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+                ];
+                
+                document.getElementById('mois_debut').value = months[currentMonth];
+                document.getElementById('annee_debut').value = currentYear;
+                
+                // Par défaut, 3 mois consécutifs
+                const endMonth = (currentMonth + 2) % 12;
+                const endYear = currentMonth + 2 >= 12 ? currentYear + 1 : currentYear;
+                document.getElementById('mois_fin').value = months[endMonth];
+                document.getElementById('annee_fin').value = endYear;
+            } else {
+                singleGroup.style.display = 'block';
+                multiGroup.style.display = 'none';
+            }
+        });
+
+        // Gestion de l'affichage de la date de paiement personnalisée
+        document.getElementById('jour_paiement_mois').addEventListener('change', function() {
+            const customGroup = document.getElementById('date_paiement_custom_group');
+            if (this.value === 'custom') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        });
+
+        // Calcul automatique du total
+        function calculateTotal() {
+            const loyer = parseFloat(document.getElementById('loyer').value) || 0;
+            const charges = parseFloat(document.getElementById('charges').value) || 0;
+            const autres = parseFloat(document.getElementById('autres').value) || 0;
+            document.getElementById('total_paye').value = (loyer + charges + autres).toFixed(2);
+        }
+
+        document.getElementById('loyer').addEventListener('input', calculateTotal);
+        document.getElementById('charges').addEventListener('input', calculateTotal);
+        document.getElementById('autres').addEventListener('input', calculateTotal);
+
+        // Initialiser les dates
+        const today = new Date();
+        document.getElementById('date_paiement_custom').value = today.toISOString().split('T')[0];
+        document.getElementById('date_etablissement').value = today.toISOString().split('T')[0];
+
+        // Initialiser le mois et l'année actuels
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        const months = [
+            'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+            'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+        ];
+        document.getElementById('mois_concerne').value = months[currentMonth];
+        document.getElementById('annee_concerne').value = currentYear;
+
+        function calculatePaymentDate(monthData) {
+            const jourPaiement = document.getElementById('jour_paiement_mois').value;
+            
+            if (jourPaiement === 'custom') {
+                return document.getElementById('date_paiement_custom').value;
+            }
+            
+            const year = monthData.year;
+            const month = monthData.monthIndex; // 0-11
+            
+            if (jourPaiement === '31') {
+                // Dernier jour du mois
+                const lastDay = new Date(year, month + 1, 0).getDate();
+                return new Date(year, month, lastDay).toISOString().split('T')[0];
+            } else {
+                // Jour fixe du mois
+                const day = parseInt(jourPaiement);
+                return new Date(year, month, day).toISOString().split('T')[0];
+            }
+        }
+
+        function getMonthsList() {
+            const isMultiMonth = document.getElementById('multi_mois').checked;
+            
+            if (!isMultiMonth) {
+                // Mode mois unique
+                return [{
+                    month: document.getElementById('mois_concerne').value,
+                    year: parseInt(document.getElementById('annee_concerne').value),
+                    monthIndex: months.indexOf(document.getElementById('mois_concerne').value)
+                }];
+            } else {
+                // Mode multi-mois
+                const startMonth = document.getElementById('mois_debut').value;
+                const startYear = parseInt(document.getElementById('annee_debut').value);
+                const endMonth = document.getElementById('mois_fin').value;
+                const endYear = parseInt(document.getElementById('annee_fin').value);
+                
+                const startIndex = months.indexOf(startMonth);
+                const endIndex = months.indexOf(endMonth);
+                
+                const monthsList = [];
+                let currentMonthIndex = startIndex;
+                let currentYear = startYear;
+                
+                // Limite de sécurité : maximum 12 mois
+                let count = 0;
+                
+                while (count < 12) {
+                    monthsList.push({
+                        month: months[currentMonthIndex],
+                        year: currentYear,
+                        monthIndex: currentMonthIndex
+                    });
+                    
+                    // Vérifier si on a atteint le mois de fin
+                    if (currentMonthIndex === endIndex && currentYear === endYear) {
+                        break;
+                    }
+                    
+                    // Passer au mois suivant
+                    currentMonthIndex++;
+                    if (currentMonthIndex >= 12) {
+                        currentMonthIndex = 0;
+                        currentYear++;
+                    }
+                    
+                    count++;
+                }
+                
+                return monthsList;
+            }
+        }
+
+        function previewQuittance() {
+            const formData = collectFormData();
+            const monthsList = getMonthsList();
+            const preview = document.getElementById('preview');
+            
+            let allQuittancesHTML = '';
+            
+            monthsList.forEach((monthData, index) => {
+                const quittanceData = {
+                    ...formData,
+                    mois_concerne: monthData.month,
+                    annee_concerne: monthData.year,
+                    date_paiement: calculatePaymentDate(monthData),
+                    signature_data_url: signatureDataUrl
+                };
+                
+                allQuittancesHTML += generateQuittanceHTML(quittanceData);
+                
+                // Ajouter une séparation entre les quittances (sauf pour la dernière)
+                if (index < monthsList.length - 1) {
+                    allQuittancesHTML += '<div style="page-break-after: always; margin: 30px 0; border-top: 2px dashed #27ae60; text-align: center; padding: 10px; color: #27ae60; font-weight: bold;">Quittance suivante</div>';
+                }
+            });
+            
+            preview.innerHTML = allQuittancesHTML;
+            
+            document.querySelector('.edit-mode').classList.add('hidden');
+            document.querySelector('.preview-mode').classList.add('active');
+            document.getElementById('editBtn').style.display = 'inline-block';
+        }
+
+        function editQuittance() {
+            document.querySelector('.edit-mode').classList.remove('hidden');
+            document.querySelector('.preview-mode').classList.remove('active');
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function collectFormData() {
+            return {
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                bailleur_qualite: document.getElementById('bailleur_qualite').value,
+                bailleur_adresse: document.getElementById('bailleur_adresse').value,
+                bailleur_tel: document.getElementById('bailleur_tel').value,
+                bailleur_email: document.getElementById('bailleur_email').value,
+                
+                locataire_nom: document.getElementById('locataire_nom').value,
+                locataire_adresse: document.getElementById('locataire_adresse').value,
+                
+                logement_adresse: document.getElementById('logement_adresse').value,
+                logement_cp: document.getElementById('logement_cp').value,
+                logement_ville: document.getElementById('logement_ville').value,
+                logement_type: document.getElementById('logement_type').value,
+                
+                loyer: document.getElementById('loyer').value,
+                charges: document.getElementById('charges').value,
+                autres: document.getElementById('autres').value,
+                total_paye: document.getElementById('total_paye').value,
+                detail_charges: document.getElementById('detail_charges').value,
+                
+                jour_paiement_mois: document.getElementById('jour_paiement_mois').value,
+                date_paiement_custom: document.getElementById('date_paiement_custom').value,
+                date_etablissement: document.getElementById('date_etablissement').value,
+                lieu_etablissement: document.getElementById('lieu_etablissement').value,
+                
+                // Sauvegarder aussi les paramètres multi-mois
+                multi_mois: document.getElementById('multi_mois').checked,
+                mois_debut: document.getElementById('mois_debut').value,
+                annee_debut: document.getElementById('annee_debut').value,
+                mois_fin: document.getElementById('mois_fin').value,
+                annee_fin: document.getElementById('annee_fin').value
+            };
+        }
+
+        function generateQuittanceHTML(data) {
+            const numeroQuittance = generateNumeroQuittance(data.mois_concerne, data.annee_concerne);
+            
+            return `
+                <div class="quittance-preview">
+                    <div class="quittance-header">
+                        <h1>QUITTANCE DE LOYER</h1>
+                        <p><strong>N° ${numeroQuittance}</strong></p>
+                    </div>
+
+                    <div class="quittance-content">
+                        <div class="quittance-section">
+                            <h3>BAILLEUR</h3>
+                            <p><strong>${data.bailleur_qualite} :</strong> ${data.bailleur_nom}</p>
+                            <p><strong>Adresse :</strong> ${data.bailleur_adresse}</p>
+                            ${data.bailleur_tel ? `<p><strong>Téléphone :</strong> ${data.bailleur_tel}</p>` : ''}
+                            ${data.bailleur_email ? `<p><strong>Email :</strong> ${data.bailleur_email}</p>` : ''}
+                        </div>
+
+                        <div class="quittance-section">
+                            <h3>LOCATAIRE</h3>
+                            <p><strong>Nom :</strong> ${data.locataire_nom}</p>
+                            ${data.locataire_adresse ? `<p><strong>Adresse :</strong> ${data.locataire_adresse}</p>` : ''}
+                        </div>
+
+                        <div class="quittance-section">
+                            <h3>LOGEMENT LOUÉ</h3>
+                            <p><strong>Type :</strong> ${data.logement_type}</p>
+                            <p><strong>Adresse :</strong> ${data.logement_adresse}</p>
+                            <p><strong>Code postal :</strong> ${data.logement_cp} <strong>Ville :</strong> ${data.logement_ville}</p>
+                        </div>
+
+                        <div class="quittance-section">
+                            <h3>PÉRIODE ET MONTANTS</h3>
+                            <p><strong>Période concernée :</strong> ${capitalizeFirst(data.mois_concerne)} ${data.annee_concerne}</p>
+                            <p><strong>Date de paiement :</strong> ${formatDate(data.date_paiement)}</p>
+                            
+                            <table class="montants-table">
+                                <thead>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.loyer ? `<tr><td>Loyer</td><td>${parseFloat(data.loyer).toFixed(2)} €</td></tr>` : ''}
+                                    ${data.charges ? `<tr><td>Charges${data.detail_charges ? ' (' + data.detail_charges + ')' : ''}</td><td>${parseFloat(data.charges).toFixed(2)} €</td></tr>` : ''}
+                                    ${data.autres ? `<tr><td>Autres</td><td>${parseFloat(data.autres).toFixed(2)} €</td></tr>` : ''}
+                                    <tr class="total-row">
+                                        <td><strong>TOTAL PAYÉ</strong></td>
+                                        <td><strong>${parseFloat(data.total_paye).toFixed(2)} €</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="quittance-section">
+                            <p><strong>Je soussigné(e) ${data.bailleur_nom}, ${data.bailleur_qualite.toLowerCase()} du logement ci-dessus désigné, reconnaît avoir reçu de ${data.locataire_nom} la somme de ${numberToWords(data.total_paye)} euros (${parseFloat(data.total_paye).toFixed(2)} €) pour le paiement du loyer et des charges de la période du ${capitalizeFirst(data.mois_concerne)} ${data.annee_concerne}.</strong></p>
+                        </div>
+
+                        <div class="signature-zone">
+                            <p><strong>Fait à ${data.lieu_etablissement}, le ${formatDate(data.date_etablissement)}</strong></p>
+                            ${data.signature_data_url ? 
+                                `<img src="${data.signature_data_url}" style="max-height: 50px; max-width: 200px; margin: 15px 0 5px auto; display: block;">` :
+                                '<div class="signature-line"></div>'
+                            }
+                            <p style="text-align: right;"><strong>Signature du ${data.bailleur_qualite.toLowerCase()}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateNumeroQuittance(mois, annee) {
+            const monthIndex = months.indexOf(mois) + 1;
+            const paddedMonth = String(monthIndex).padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `${annee}${paddedMonth}${random}`;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function numberToWords(num) {
+            const number = parseFloat(num);
+            if (isNaN(number)) return 'zéro';
+            
+            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+            const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+            
+            if (number < 20) {
+                return ones[Math.floor(number)] || number.toString();
+            } else if (number < 100) {
+                const tensDigit = Math.floor(number / 10);
+                const onesDigit = number % 10;
+                if (tensDigit === 7 || tensDigit === 9) {
+                    return tens[tensDigit] + (onesDigit > 0 ? '-' + ones[onesDigit] : '');
+                } else {
+                    return tens[tensDigit] + (onesDigit > 0 ? '-' + ones[onesDigit] : '');
+                }
+            } else if (number < 1000) {
+                const hundredsDigit = Math.floor(number / 100);
+                const remainder = number % 100;
+                
+                let result = '';
+                if (hundredsDigit === 1) {
+                    result = 'cent';
+                } else {
+                    result = ones[hundredsDigit] + ' cent';
+                    // "cent" s'accorde seulement s'il est en fin de nombre (pas suivi d'autre chose)
+                    if (remainder === 0) {
+                        result += 's';
+                    }
+                }
+                
+                if (remainder > 0) {
+                    result += ' ' + numberToWords(remainder);
+                }
+                return result;
+            } else if (number < 1000000) {
+                const thousands = Math.floor(number / 1000);
+                const remainder = number % 1000;
+                
+                let result = '';
+                if (thousands === 1) {
+                    result = 'mille';
+                } else {
+                    result = numberToWords(thousands) + ' mille';
+                }
+                
+                if (remainder > 0) {
+                    result += ' ' + numberToWords(remainder);
+                }
+                return result;
+            } else {
+                return number.toString(); // Pour les nombres plus grands
+            }
+        }
+
+        function saveQuittance() {
+            const data = collectFormData();
+            const monthsList = getMonthsList();
+            
+            let filename;
+            if (monthsList.length === 1) {
+                filename = `quittance_${monthsList[0].month}_${monthsList[0].year}.json`;
+            } else {
+                filename = `quittances_${monthsList[0].month}_${monthsList[0].year}_à_${monthsList[monthsList.length-1].month}_${monthsList[monthsList.length-1].year}.json`;
+            }
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = filename;
+            link.click();
+        }
+
+        function loadQuittance() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function fillFormData(data) {
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = data[key];
+                        // Déclencher l'événement change pour mettre à jour l'affichage
+                        if (key === 'multi_mois') {
+                            element.dispatchEvent(new Event('change'));
+                        }
+                    } else {
+                        element.value = data[key];
+                        // Déclencher l'événement change pour la date de paiement
+                        if (key === 'jour_paiement_mois') {
+                            element.dispatchEvent(new Event('change'));
+                        }
+                    }
+                }
+            });
+            
+            // Recalculer le total
+            calculateTotal();
+        }
+    </script>
+</body>
+</html>
