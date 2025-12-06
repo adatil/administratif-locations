@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Bail Mobilité - Version Améliorée</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #e74c3c;
+            --primary-dark: #c0392b;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --bg-white: white;
+            --border-color: #bdc3c7;
+            --shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --bg-white: #34495e;
+            --border-color: #7f8c8d;
+            --shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--warning-color));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            margin-top: 5px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-white);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-right: 10px;
+            min-width: 150px;
+            position: relative;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--bg-white);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+        }
+
+        .form-group input.error,
+        .form-group textarea.error,
+        .form-group select.error {
+            border-color: var(--danger-color);
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .signature-canvas-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            margin: 20px 0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: crosshair;
+            background: white;
+        }
+
+        .autosave-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .autosave-indicator.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-group label {
+                min-width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                min-width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 20px;
+            }
+            .buttons, .header, .progress-container, .theme-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="autosave-indicator" id="autosaveIndicator">✓ Sauvegarde automatique</div>
+
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Changer le thème">🌓</button>
+            <h1>CONTRAT DE BAIL MOBILITÉ</h1>
+            <h2>Location meublée de courte durée</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% complété</div>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">DÉMARRAGE RAPIDE</div>
+                <div class="buttons">
+                    <button class="btn btn-info" onclick="loadTemplate()">📋 Charger un exemple</button>
+                    <button class="btn btn-success" onclick="loadFromStorage()">📂 Reprendre ma saisie</button>
+                    <button class="btn btn-primary" onclick="clearForm()">🗑️ Nouveau formulaire</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LE BAILLEUR</div>
+                <div class="form-group">
+                    <label>Nom et prénom :
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Indiquez le nom complet du propriétaire (bailleur) tel qu'il apparaît sur les documents officiels.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="bailleur_nom" placeholder="NOM Prénom" required data-validation="required">
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+                <div class="form-group">
+                    <label>Né(e) le :</label>
+                    <input type="date" id="bailleur_naissance" required data-validation="required">
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+                <div class="form-group">
+                    <label>Domicilié(e) :</label>
+                    <textarea id="bailleur_adresse" placeholder="Adresse complète" required data-validation="required"></textarea>
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">MOTIF DE LA MOBILITÉ
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Le bail mobilité est réservé aux personnes en situation de mobilité temporaire (études, stage, formation, mutation professionnelle, etc.)</span>
+                    </span>
+                </div>
+                <div class="form-group">
+                    <label>Motif :</label>
+                    <select id="motif_mobilite" required data-validation="required">
+                        <option value="">Sélectionner le motif</option>
+                        <option value="formation_professionnelle">Formation professionnelle</option>
+                        <option value="etudes_superieures">Études supérieures</option>
+                        <option value="contrat_apprentissage">Contrat d'apprentissage</option>
+                        <option value="stage">Stage</option>
+                        <option value="mutation_professionnelle">Mutation professionnelle</option>
+                    </select>
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">SIGNATURE ÉLECTRONIQUE (Optionnel)</div>
+                <div class="signature-canvas-container">
+                    <p>Signature du bailleur :</p>
+                    <canvas id="signatureCanvas" width="400" height="150"></canvas>
+                    <div style="margin-top: 10px;">
+                        <button type="button" class="btn btn-info" onclick="clearSignature()">🗑️ Effacer la signature</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="validateAndPreview()">📄 Aperçu du bail</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="btn btn-info" onclick="exportToPDF()">📥 Télécharger PDF</button>
+            <button class="btn btn-primary" onclick="saveBail()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadBail()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let autoSaveInterval;
+        let signaturePad;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSignaturePad();
+            setupAutoSave();
+            attachValidationListeners();
+            updateProgress();
+            loadTheme();
+        });
+
+        // Gestion de la signature
+        function initializeSignaturePad() {
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Support tactile
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                isDrawing = true;
+                lastX = touch.clientX - rect.left;
+                lastY = touch.clientY - rect.top;
+            }
+
+            function handleTouchMove(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                lastX = x;
+                lastY = y;
+            }
+        }
+
+        function clearSignature() {
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Sauvegarde automatique
+        function setupAutoSave() {
+            autoSaveInterval = setInterval(() => {
+                saveToLocalStorage();
+                showAutoSaveIndicator();
+            }, 30000); // 30 secondes
+
+            // Sauvegarder aussi à chaque changement
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                element.addEventListener('change', () => {
+                    setTimeout(saveToLocalStorage, 1000);
+                });
+            });
+        }
+
+        function saveToLocalStorage() {
+            const data = collectFormData();
+            localStorage.setItem('bail_mobilite_autosave', JSON.stringify(data));
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('bail_mobilite_autosave');
+            if (saved) {
+                if (confirm('Voulez-vous reprendre votre dernière saisie ?')) {
+                    fillFormData(JSON.parse(saved));
+                }
+            } else {
+                alert('Aucune sauvegarde trouvée.');
+            }
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Validation
+        function attachValidationListeners() {
+            document.querySelectorAll('[data-validation]').forEach(element => {
+                element.addEventListener('blur', () => validateField(element));
+                element.addEventListener('input', () => {
+                    if (element.classList.contains('error')) {
+                        validateField(element);
+                    }
+                    updateProgress();
+                });
+            });
+        }
+
+        function validateField(field) {
+            const validation = field.getAttribute('data-validation');
+            const errorMsg = field.parentElement.querySelector('.error-message');
+            let isValid = true;
+
+            if (validation === 'required' && !field.value.trim()) {
+                isValid = false;
+            }
+
+            if (isValid) {
+                field.classList.remove('error');
+                if (errorMsg) errorMsg.classList.remove('show');
+            } else {
+                field.classList.add('error');
+                if (errorMsg) errorMsg.classList.add('show');
+            }
+
+            return isValid;
+        }
+
+        function validateAndPreview() {
+            let isValid = true;
+            document.querySelectorAll('[data-validation="required"]').forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                alert('⚠️ Veuillez remplir tous les champs obligatoires avant de continuer.');
+                return false;
+            }
+
+            previewBail();
+        }
+
+        // Progression
+        function updateProgress() {
+            const requiredFields = document.querySelectorAll('[data-validation="required"]');
+            let filled = 0;
+
+            requiredFields.forEach(field => {
+                if (field.value.trim()) {
+                    filled++;
+                }
+            });
+
+            const percentage = Math.round((filled / requiredFields.length) * 100);
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '% complété (' + filled + '/' + requiredFields.length + ' champs)';
+        }
+
+        // Template exemple
+        function loadTemplate() {
+            if (confirm('Charger un exemple de données ? Cela écrasera vos données actuelles.')) {
+                const template = {
+                    bailleur_nom: 'DUPONT Jean',
+                    bailleur_naissance: '1980-05-15',
+                    bailleur_adresse: '123 Avenue des Champs\n75008 Paris',
+                    motif_mobilite: 'etudes_superieures'
+                };
+                fillFormData(template);
+                updateProgress();
+            }
+        }
+
+        function clearForm() {
+            if (confirm('Voulez-vous vraiment effacer le formulaire ?')) {
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.type !== 'button' && el.type !== 'submit') {
+                        el.value = '';
+                    }
+                });
+                clearSignature();
+                updateProgress();
+            }
+        }
+
+        // Thème sombre
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Export PDF
+        function exportToPDF() {
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: 10,
+                filename: 'bail_mobilite.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Fonctions de base
+        function collectFormData() {
+            return {
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                bailleur_naissance: document.getElementById('bailleur_naissance').value,
+                bailleur_adresse: document.getElementById('bailleur_adresse').value,
+                motif_mobilite: document.getElementById('motif_mobilite').value
+            };
+        }
+
+        function fillFormData(data) {
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = data[key];
+                }
+            });
+        }
+
+        function saveBail() {
+            const data = collectFormData();
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'bail_mobilite.json';
+            link.click();
+        }
+
+        function loadBail() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                            updateProgress();
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function previewBail() {
+            alert('Fonction d\'aperçu - à implémenter selon vos besoins');
+        }
+
+        // Fonction numberToWords complète
+        function numberToWords(num) {
+            const number = Math.floor(parseFloat(num));
+            if (isNaN(number) || number < 0) return 'zéro';
+            if (number === 0) return 'zéro';
+
+            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
+            const tens = ['', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+            const hundreds = ['', 'cent', 'deux cents', 'trois cents', 'quatre cents', 'cinq cents', 'six cents', 'sept cents', 'huit cents', 'neuf cents'];
+
+            if (number < 17) return ones[number];
+            if (number < 20) return 'dix-' + ones[number - 10];
+            if (number < 100) {
+                const t = Math.floor(number / 10);
+                const o = number % 10;
+                if (t === 7 || t === 9) {
+                    return tens[t - 1] + '-' + ones[10 + o];
+                }
+                if (t === 8 && o === 0) return 'quatre-vingts';
+                return tens[t] + (o > 0 ? '-' + ones[o] : '');
+            }
+            if (number < 1000) {
+                const h = Math.floor(number / 100);
+                const r = number % 100;
+                return hundreds[h] + (r > 0 ? ' ' + numberToWords(r) : '');
+            }
+            if (number < 1000000) {
+                const t = Math.floor(number / 1000);
+                const r = number % 1000;
+                const tWord = t === 1 ? 'mille' : numberToWords(t) + ' mille';
+                return tWord + (r > 0 ? ' ' + numberToWords(r) : '');
+            }
+            return number.toString();
+        }
+    </script>
+</body>
+</html>

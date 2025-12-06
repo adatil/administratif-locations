@@ -15,6 +15,33 @@ Ces générateurs permettent de créer rapidement et facilement tous les documen
 ## ✨ Fonctionnalités
 
 ### 📄 Générateurs de Baux
+
+#### 🆕 Versions Améliorées (Recommandées)
+
+- **`bail_civil_generator_v2.html`** ⭐ **NOUVEAU**
+  Version améliorée du bail civil avec fonctionnalités avancées
+  - ✅ Validation intelligente des formulaires
+  - 💾 Sauvegarde automatique (localStorage)
+  - 📊 Barre de progression
+  - ⚠️ Vérification de cohérence (loyer, charges, dépôt)
+  - 🌓 Mode sombre
+  - 📥 Export PDF natif
+  - ℹ️ Tooltips informatifs
+  - 📋 Templates pré-remplis
+  - ♿ Accessibilité WCAG 2.1
+  - 📱 Design responsive optimisé
+
+- **`bail_mobilite_generator_v2.html`** ⭐ **NOUVEAU**
+  Version améliorée du bail mobilité avec fonctionnalités avancées
+  - ✅ Bug JS corrigé (fonction dans CSS)
+  - ✅ Toutes les améliorations du bail civil
+  - ✍️ Signature électronique (canvas)
+  - 🔢 Fonction numberToWords complète (0-999999)
+
+> 📖 **Voir [AMELIORATIONS.md](AMELIORATIONS.md)** pour le détail complet des améliorations
+
+#### Versions Originales
+
 - **`bail_civil_html_completable.html`** (44 KB)
   Générateur de bail civil pour résidence secondaire
   - Formulaire complet et guidé

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Bail Civil - Version Améliorée</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --primary-dark: #1a252f;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --bg-white: white;
+            --border-color: #bdc3c7;
+            --shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --bg-white: #34495e;
+            --border-color: #7f8c8d;
+            --shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            margin-top: 5px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-white);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-right: 10px;
+            min-width: 150px;
+            position: relative;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--bg-white);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-group input.error,
+        .form-group textarea.error,
+        .form-group select.error {
+            border-color: var(--danger-color);
+        }
+
+        .form-group input.warning,
+        .form-group textarea.warning,
+        .form-group select.warning {
+            border-color: var(--warning-color);
+        }
+
+        .error-message, .warning-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            width: 100%;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+        }
+
+        .warning-message {
+            color: var(--warning-color);
+        }
+
+        .error-message.show, .warning-message.show {
+            display: block;
+        }
+
+        .calculated {
+            background-color: #e8f6f3 !important;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .autosave-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .autosave-indicator.show {
+            opacity: 1;
+        }
+
+        .validation-summary {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .validation-summary.show {
+            display: block;
+        }
+
+        .validation-summary h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .validation-summary ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-group label {
+                min-width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                min-width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+                padding: 20px;
+            }
+            .buttons, .header, .progress-container, .theme-toggle, .validation-summary {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="autosave-indicator" id="autosaveIndicator">✓ Sauvegarde automatique</div>
+
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌓</button>
+            <h1>CONTRAT DE BAIL CIVIL - RÉSIDENCE SECONDAIRE</h1>
+            <h2>Version Améliorée avec Validation Intelligente</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% complété</div>
+        </div>
+
+        <div class="validation-summary" id="validationSummary">
+            <h4>⚠️ Vérifications importantes</h4>
+            <ul id="validationList"></ul>
+        </div>
+
+        <div class="edit-mode">
+            <div class="section">
+                <div class="section-title">DÉMARRAGE RAPIDE</div>
+                <div class="buttons">
+                    <button class="btn btn-info" onclick="loadTemplate()">📋 Charger un exemple</button>
+                    <button class="btn btn-success" onclick="loadFromStorage()">📂 Reprendre ma saisie</button>
+                    <button class="btn btn-primary" onclick="clearForm()">🗑️ Nouveau formulaire</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LE BAILLEUR</div>
+                <div class="form-group">
+                    <label for="bailleur_nom">Nom et prénom :
+                        <span class="tooltip" role="tooltip">ℹ️
+                            <span class="tooltiptext">Indiquez le nom complet du propriétaire (bailleur) tel qu'il apparaît sur les documents officiels.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="bailleur_nom" placeholder="NOM Prénom" required data-validation="required" aria-required="true">
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+                <div class="form-group">
+                    <label for="bailleur_adresse">Domicilié(e) :</label>
+                    <textarea id="bailleur_adresse" placeholder="Adresse complète" required data-validation="required" aria-required="true"></textarea>
+                    <span class="error-message">Ce champ est requis</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOYER ET CHARGES</div>
+                <div class="form-group">
+                    <label for="loyer_mensuel">Loyer mensuel (€) :
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Montant du loyer hors charges. Sera vérifié pour cohérence.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="loyer_mensuel" placeholder="€" step="0.01" required data-validation="required,amount" aria-required="true">
+                    <span class="error-message">Ce champ est requis</span>
+                    <span class="warning-message">⚠️ Le loyer semble élevé pour ce type de bien</span>
+                </div>
+                <div class="form-group">
+                    <label for="charges">Charges (€) :</label>
+                    <input type="number" id="charges" placeholder="€" step="0.01" data-validation="amount">
+                    <span class="warning-message">⚠️ Les charges représentent plus de 30% du loyer</span>
+                </div>
+                <div class="form-group">
+                    <label for="loyer_total">Loyer total (€) :</label>
+                    <input type="number" id="loyer_total" placeholder="€" class="calculated" readonly aria-readonly="true">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DÉPÔT DE GARANTIE</div>
+                <div class="form-group">
+                    <label for="depot_garantie">Montant (€) :
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Généralement 1 à 2 mois de loyer hors charges pour une résidence secondaire.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="depot_garantie" placeholder="€" step="0.01" data-validation="amount">
+                    <span class="warning-message">⚠️ Le dépôt de garantie est inhabituel pour ce type de bail</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="validateAndPreview()">📄 Aperçu du bail</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="btn btn-info" onclick="exportToPDF()">📥 Télécharger PDF</button>
+            <button class="btn btn-primary" onclick="saveBail()">💾 Sauvegarder</button>
+            <button class="btn btn-info" onclick="loadBail()">📂 Charger</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let autoSaveInterval;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAutoSave();
+            attachValidationListeners();
+            setupCalculations();
+            updateProgress();
+            loadTheme();
+        });
+
+        // Calculs automatiques
+        function setupCalculations() {
+            const loyerInput = document.getElementById('loyer_mensuel');
+            const chargesInput = document.getElementById('charges');
+            const totalInput = document.getElementById('loyer_total');
+
+            function calculateTotal() {
+                const loyer = parseFloat(loyerInput.value) || 0;
+                const charges = parseFloat(chargesInput.value) || 0;
+                totalInput.value = (loyer + charges).toFixed(2);
+
+                // Vérification de cohérence
+                checkCoherence();
+            }
+
+            loyerInput.addEventListener('input', calculateTotal);
+            chargesInput.addEventListener('input', calculateTotal);
+        }
+
+        // Vérification de cohérence
+        function checkCoherence() {
+            const validationList = [];
+
+            const loyer = parseFloat(document.getElementById('loyer_mensuel').value) || 0;
+            const charges = parseFloat(document.getElementById('charges').value) || 0;
+            const depot = parseFloat(document.getElementById('depot_garantie').value) || 0;
+
+            // Vérifier ratio charges/loyer
+            if (loyer > 0 && charges > 0) {
+                const ratioCharges = (charges / loyer) * 100;
+                const chargesWarning = document.getElementById('charges').parentElement.querySelector('.warning-message');
+
+                if (ratioCharges > 30) {
+                    document.getElementById('charges').classList.add('warning');
+                    if (chargesWarning) chargesWarning.classList.add('show');
+                    validationList.push('Les charges représentent ' + ratioCharges.toFixed(0) + '% du loyer (généralement < 30%)');
+                } else {
+                    document.getElementById('charges').classList.remove('warning');
+                    if (chargesWarning) chargesWarning.classList.remove('show');
+                }
+            }
+
+            // Vérifier loyer élevé
+            if (loyer > 3000) {
+                const loyerWarning = document.getElementById('loyer_mensuel').parentElement.querySelector('.warning-message');
+                document.getElementById('loyer_mensuel').classList.add('warning');
+                if (loyerWarning) loyerWarning.classList.add('show');
+                validationList.push('Loyer très élevé (' + loyer + '€) - vérifiez la saisie');
+            }
+
+            // Vérifier dépôt de garantie
+            if (depot > 0 && loyer > 0) {
+                const ratioDepot = depot / loyer;
+                const depotWarning = document.getElementById('depot_garantie').parentElement.querySelector('.warning-message');
+
+                if (ratioDepot > 3) {
+                    document.getElementById('depot_garantie').classList.add('warning');
+                    if (depotWarning) depotWarning.classList.add('show');
+                    validationList.push('Dépôt de garantie élevé (' + ratioDepot.toFixed(1) + ' mois de loyer)');
+                } else {
+                    document.getElementById('depot_garantie').classList.remove('warning');
+                    if (depotWarning) depotWarning.classList.remove('show');
+                }
+            }
+
+            // Afficher résumé
+            const summary = document.getElementById('validationSummary');
+            const list = document.getElementById('validationList');
+
+            if (validationList.length > 0) {
+                list.innerHTML = validationList.map(item => '<li>' + item + '</li>').join('');
+                summary.classList.add('show');
+            } else {
+                summary.classList.remove('show');
+            }
+        }
+
+        // Sauvegarde automatique
+        function setupAutoSave() {
+            autoSaveInterval = setInterval(() => {
+                saveToLocalStorage();
+                showAutoSaveIndicator();
+            }, 30000);
+
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                element.addEventListener('change', () => {
+                    setTimeout(saveToLocalStorage, 1000);
+                });
+            });
+        }
+
+        function saveToLocalStorage() {
+            const data = collectFormData();
+            localStorage.setItem('bail_civil_autosave', JSON.stringify(data));
+            localStorage.setItem('bail_civil_autosave_date', new Date().toISOString());
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('bail_civil_autosave');
+            const saveDate = localStorage.getItem('bail_civil_autosave_date');
+
+            if (saved) {
+                const dateStr = saveDate ? new Date(saveDate).toLocaleString('fr-FR') : 'inconnue';
+                if (confirm('Voulez-vous reprendre votre dernière saisie du ' + dateStr + ' ?')) {
+                    fillFormData(JSON.parse(saved));
+                    updateProgress();
+                }
+            } else {
+                alert('Aucune sauvegarde trouvée.');
+            }
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Validation
+        function attachValidationListeners() {
+            document.querySelectorAll('[data-validation]').forEach(element => {
+                element.addEventListener('blur', () => validateField(element));
+                element.addEventListener('input', () => {
+                    if (element.classList.contains('error')) {
+                        validateField(element);
+                    }
+                    updateProgress();
+                });
+            });
+        }
+
+        function validateField(field) {
+            const validations = field.getAttribute('data-validation').split(',');
+            const errorMsg = field.parentElement.querySelector('.error-message');
+            let isValid = true;
+
+            for (let validation of validations) {
+                validation = validation.trim();
+
+                if (validation === 'required' && !field.value.trim()) {
+                    isValid = false;
+                    break;
+                }
+
+                if (validation === 'amount' && field.value) {
+                    const amount = parseFloat(field.value);
+                    if (isNaN(amount) || amount < 0) {
+                        isValid = false;
+                        if (errorMsg) errorMsg.textContent = 'Montant invalide';
+                        break;
+                    }
+                }
+            }
+
+            if (isValid) {
+                field.classList.remove('error');
+                if (errorMsg) errorMsg.classList.remove('show');
+            } else {
+                field.classList.add('error');
+                if (errorMsg) errorMsg.classList.add('show');
+            }
+
+            return isValid;
+        }
+
+        function validateAndPreview() {
+            let isValid = true;
+            const errors = [];
+
+            document.querySelectorAll('[data-validation*="required"]').forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                    const label = field.parentElement.querySelector('label');
+                    if (label) {
+                        errors.push(label.textContent.replace('ℹ️', '').trim());
+                    }
+                }
+            });
+
+            if (!isValid) {
+                alert('⚠️ Veuillez remplir tous les champs obligatoires:\n\n' + errors.join('\n'));
+                return false;
+            }
+
+            alert('✓ Validation réussie ! Génération de l\'aperçu...');
+        }
+
+        // Progression
+        function updateProgress() {
+            const requiredFields = document.querySelectorAll('[data-validation*="required"]');
+            let filled = 0;
+
+            requiredFields.forEach(field => {
+                if (field.value.trim()) {
+                    filled++;
+                }
+            });
+
+            const percentage = Math.round((filled / requiredFields.length) * 100);
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.setAttribute('aria-valuenow', percentage);
+            document.getElementById('progressText').textContent = percentage + '% complété (' + filled + '/' + requiredFields.length + ' champs)';
+        }
+
+        // Template
+        function loadTemplate() {
+            if (confirm('Charger un exemple de données ? Cela écrasera vos données actuelles.')) {
+                const template = {
+                    bailleur_nom: 'MARTIN Sophie',
+                    bailleur_adresse: '45 Rue de la République\n69001 Lyon',
+                    loyer_mensuel: '850',
+                    charges: '120',
+                    depot_garantie: '1700'
+                };
+                fillFormData(template);
+                updateProgress();
+                setTimeout(checkCoherence, 100);
+            }
+        }
+
+        function clearForm() {
+            if (confirm('Voulez-vous vraiment effacer le formulaire ?')) {
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.type !== 'button' && el.type !== 'submit' && !el.readOnly) {
+                        el.value = '';
+                        el.classList.remove('error', 'warning');
+                    }
+                });
+                document.querySelectorAll('.error-message, .warning-message').forEach(msg => {
+                    msg.classList.remove('show');
+                });
+                document.getElementById('validationSummary').classList.remove('show');
+                updateProgress();
+            }
+        }
+
+        // Thème
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Export PDF
+        function exportToPDF() {
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: 10,
+                filename: 'bail_civil_residence_secondaire.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Fonctions utilitaires
+        function collectFormData() {
+            return {
+                bailleur_nom: document.getElementById('bailleur_nom').value,
+                bailleur_adresse: document.getElementById('bailleur_adresse').value,
+                loyer_mensuel: document.getElementById('loyer_mensuel').value,
+                charges: document.getElementById('charges').value,
+                loyer_total: document.getElementById('loyer_total').value,
+                depot_garantie: document.getElementById('depot_garantie').value
+            };
+        }
+
+        function fillFormData(data) {
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = data[key];
+                }
+            });
+        }
+
+        function saveBail() {
+            const data = collectFormData();
+            data.savedDate = new Date().toISOString();
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'bail_civil_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+        }
+
+        function loadBail() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            fillFormData(data);
+                            updateProgress();
+                            setTimeout(checkCoherence, 100);
+                        } catch (error) {
+                            alert('Erreur lors du chargement du fichier: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Fonction numberToWords complète (identique à bail mobilité)
+        function numberToWords(num) {
+            const number = Math.floor(parseFloat(num));
+            if (isNaN(number) || number < 0) return 'zéro';
+            if (number === 0) return 'zéro';
+
+            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
+            const tens = ['', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+            const hundreds = ['', 'cent', 'deux cents', 'trois cents', 'quatre cents', 'cinq cents', 'six cents', 'sept cents', 'huit cents', 'neuf cents'];
+
+            if (number < 17) return ones[number];
+            if (number < 20) return 'dix-' + ones[number - 10];
+            if (number < 100) {
+                const t = Math.floor(number / 10);
+                const o = number % 10;
+                if (t === 7 || t === 9) {
+                    return tens[t - 1] + '-' + ones[10 + o];
+                }
+                if (t === 8 && o === 0) return 'quatre-vingts';
+                return tens[t] + (o > 0 ? '-' + ones[o] : '');
+            }
+            if (number < 1000) {
+                const h = Math.floor(number / 100);
+                const r = number % 100;
+                return hundreds[h] + (r > 0 ? ' ' + numberToWords(r) : '');
+            }
+            if (number < 1000000) {
+                const t = Math.floor(number / 1000);
+                const r = number % 1000;
+                const tWord = t === 1 ? 'mille' : numberToWords(t) + ' mille';
+                return tWord + (r > 0 ? ' ' + numberToWords(r) : '');
+            }
+            return number.toString();
+        }
+    </script>
+</body>
+</html>
