@@ -38,6 +38,15 @@ Ces générateurs permettent de créer rapidement et facilement tous les documen
   - ✍️ Signature électronique (canvas)
   - 🔢 Fonction numberToWords complète (0-999999)
 
+- **`bail_meuble_courte_duree_v2.html`** ⭐ **NOUVEAU**
+  Contrat générique de location meublée courte durée
+  - 🎨 Interface bleue distinctive
+  - 📝 Sans cadre légal spécifique (ni mobilité, ni civil)
+  - 💰 Dépôt de garantie optionnel (non limité)
+  - ⏰ Durée et conditions librement définies
+  - ✅ Toutes les améliorations V2 (dark mode, auto-save, PDF)
+  - 🔧 Adapté aux locations flexibles hors cadres légaux stricts
+
 > 📖 **Voir [AMELIORATIONS.md](AMELIORATIONS.md)** pour le détail complet des améliorations
 
 #### Versions Originales
