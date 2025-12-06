@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Bail Mobilité - Version Améliorée</title>
+    <title>Générateur de Bail Mobilité - V2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary-color: #e74c3c;
-            --primary-dark: #c0392b;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
             --text-color: #333;
             --bg-color: #f5f5f5;
             --bg-white: white;
             --border-color: #bdc3c7;
-            --shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
         [data-theme="dark"] {
@@ -25,7 +18,6 @@
             --bg-color: #2c3e50;
             --bg-white: #34495e;
             --border-color: #7f8c8d;
-            --shadow: 0 0 20px rgba(0,0,0,0.3);
         }
 
         * {
@@ -40,7 +32,6 @@
             color: var(--text-color);
             background-color: var(--bg-color);
             padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -48,65 +39,34 @@
             margin: 0 auto;
             background: var(--bg-white);
             padding: 30px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 10px;
-            transition: background-color 0.3s;
         }
 
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 3px solid var(--primary-color);
+            border-bottom: 3px solid #e74c3c;
             padding-bottom: 20px;
-            position: relative;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: none;
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.3s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .progress-container {
-            width: 100%;
-            background-color: var(--border-color);
-            border-radius: 10px;
-            height: 8px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--warning-color));
-            width: 0%;
-            transition: width 0.3s;
-            border-radius: 10px;
-        }
-
-        .progress-text {
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-color);
-            margin-top: 5px;
         }
 
         .header h1 {
-            color: var(--primary-color);
+            color: #e74c3c;
             font-size: 28px;
             margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: #c0392b;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .header h3 {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 10px;
         }
 
         .section {
@@ -115,15 +75,14 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background-color: var(--bg-white);
-            position: relative;
         }
 
         .section-title {
             font-size: 18px;
             font-weight: bold;
-            color: var(--text-color);
+            color: #2c3e50;
             margin-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 2px solid #e74c3c;
             padding-bottom: 5px;
         }
 
@@ -132,47 +91,13 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            position: relative;
         }
 
         .form-group label {
             font-weight: 600;
-            color: var(--text-color);
+            color: #2c3e50;
             margin-right: 10px;
             min-width: 150px;
-            position: relative;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 5px;
-            cursor: help;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: #555;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -125px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            font-weight: normal;
-            line-height: 1.4;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
         }
 
         .form-group input,
@@ -189,29 +114,81 @@
             color: var(--text-color);
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
+        .form-group input:focus, 
+        .form-group textarea:focus, 
         .form-group select:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: #e74c3c;
             box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
         }
 
-        .form-group input.error,
-        .form-group textarea.error,
-        .form-group select.error {
-            border-color: var(--danger-color);
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
         }
 
-        .error-message {
-            color: var(--danger-color);
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .error-message.show {
-            display: block;
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            min-width: auto;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            min-width: auto;
+            width: auto;
+        }
+
+        .amount-input {
+            width: 150px !important;
+            text-align: right;
+        }
+
+        .calculated {
+            background-color: #e8f6f3 !important;
+            font-weight: bold;
+        }
+
+        .preneur-block {
+            border: 2px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fffdf4;
+        }
+
+        .preneur-block h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -227,18 +204,23 @@
         }
 
         .btn-primary {
-            background-color: var(--primary-color);
+            background-color: #e74c3c;
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background-color: #c0392b;
             transform: translateY(-2px);
         }
 
         .btn-success {
-            background-color: var(--success-color);
+            background-color: #27ae60;
             color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
         }
 
         .btn-info {
@@ -246,76 +228,153 @@
             color: white;
         }
 
-        .buttons {
-            margin-top: 30px;
-            text-align: center;
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        .important-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .mobility-notice {
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .mobility-notice h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+
+        .mobility-notice ul {
+            margin-left: 20px;
+            color: #1565c0;
+        }
+
+        .important-notice h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .important-notice ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .signatures {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 45%;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 50px 0 10px 0;
+            height: 50px;
+        }
+
+        .preview-mode {
+            display: none;
+        }
+
+        .preview-mode.active {
+            display: block;
+        }
+
+        .edit-mode.hidden {
+            display: none;
+        }
+
+        .header.hidden {
+            display: none;
+        }
+
+        .motif-highlight {
+            background-color: #fff9c4;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .equipement-supplementaire {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
             flex-wrap: wrap;
         }
 
-        .signature-canvas-container {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            margin: 20px 0;
-            padding: 10px;
-            text-align: center;
+        .piece-select {
+            min-width: 120px;
+            padding: 5px;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
         }
 
-        canvas {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            cursor: crosshair;
-            background: white;
+        .equipement-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 5px;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
         }
 
+        /* Theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Auto-save indicator */
         .autosave-indicator {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--success-color);
+            background: #27ae60;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .autosave-indicator.show {
             opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .form-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .form-group label {
-                min-width: 100%;
-                margin-bottom: 5px;
-            }
-
-            .form-group input,
-            .form-group textarea,
-            .form-group select {
-                min-width: 100%;
-            }
-
-            .buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
         }
 
         @media print {
@@ -328,368 +387,1030 @@
                 max-width: none;
                 padding: 20px;
             }
-            .buttons, .header, .progress-container, .theme-toggle {
+            .buttons,
+            .theme-toggle,
+            .autosave-indicator {
                 display: none;
+            }
+            .form-group input, 
+            .form-group textarea, 
+            .form-group select {
+                border: none;
+                border-bottom: 1px solid #333;
+                background: transparent;
+                padding: 2px 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="autosave-indicator" id="autosaveIndicator">✓ Sauvegarde automatique</div>
+    <!-- Theme toggle button -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Basculer mode sombre">🌓</button>
+
+    <!-- Auto-save indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        💾 Sauvegardé automatiquement
+    </div>
 
     <div class="container">
         <div class="header">
-            <button class="theme-toggle" onclick="toggleTheme()" title="Changer le thème">🌓</button>
             <h1>CONTRAT DE BAIL MOBILITÉ</h1>
             <h2>Location meublée de courte durée</h2>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">0% complété</div>
+            <h3>(Articles 25-12 à 25-14 de la loi du 6 juillet 1989 - Loi ELAN)</h3>
         </div>
 
         <div class="edit-mode">
             <div class="section">
-                <div class="section-title">DÉMARRAGE RAPIDE</div>
-                <div class="buttons">
-                    <button class="btn btn-info" onclick="loadTemplate()">📋 Charger un exemple</button>
-                    <button class="btn btn-success" onclick="loadFromStorage()">📂 Reprendre ma saisie</button>
-                    <button class="btn btn-primary" onclick="clearForm()">🗑️ Nouveau formulaire</button>
-                </div>
-            </div>
-
-            <div class="section">
                 <div class="section-title">LE BAILLEUR</div>
-                <div class="form-group">
-                    <label>Nom et prénom :
-                        <span class="tooltip">ℹ️
-                            <span class="tooltiptext">Indiquez le nom complet du propriétaire (bailleur) tel qu'il apparaît sur les documents officiels.</span>
-                        </span>
-                    </label>
-                    <input type="text" id="bailleur_nom" placeholder="NOM Prénom" required data-validation="required">
-                    <span class="error-message">Ce champ est requis</span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom et prénom :</label>
+                        <input type="text" id="bailleur_nom" placeholder="NOM Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Né(e) le :</label>
+                        <input type="date" id="bailleur_naissance">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Né(e) le :</label>
-                    <input type="date" id="bailleur_naissance" required data-validation="required">
-                    <span class="error-message">Ce champ est requis</span>
+                    <label>Lieu de naissance :</label>
+                    <input type="text" id="bailleur_lieu_naissance" placeholder="Ville">
                 </div>
                 <div class="form-group">
                     <label>Domicilié(e) :</label>
-                    <textarea id="bailleur_adresse" placeholder="Adresse complète" required data-validation="required"></textarea>
-                    <span class="error-message">Ce champ est requis</span>
+                    <textarea id="bailleur_adresse" placeholder="Adresse complète"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone :</label>
+                        <input type="tel" id="bailleur_tel" placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" id="bailleur_email" placeholder="email@exemple.com">
+                    </div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">MOTIF DE LA MOBILITÉ
-                    <span class="tooltip">ℹ️
-                        <span class="tooltiptext">Le bail mobilité est réservé aux personnes en situation de mobilité temporaire (études, stage, formation, mutation professionnelle, etc.)</span>
-                    </span>
+                <div class="section-title">LE(S) PRENEUR(S)</div>
+                <div id="preneurs-container">
+                    <div class="preneur-block" data-preneur="1">
+                        <h4>Preneur 1</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom et prénom :</label>
+                                <input type="text" id="preneur1_nom" placeholder="NOM Prénom">
+                            </div>
+                            <div class="form-group">
+                                <label>Né(e) le :</label>
+                                <input type="date" id="preneur1_naissance">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu de naissance :</label>
+                            <input type="text" id="preneur1_lieu_naissance" placeholder="Ville">
+                        </div>
+                        <div class="form-group">
+                            <label>Domicilié(e) :</label>
+                            <textarea id="preneur1_adresse" placeholder="Adresse complète"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Téléphone :</label>
+                                <input type="tel" id="preneur1_tel" placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group">
+                                <label>Email :</label>
+                                <input type="email" id="preneur1_email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Profession :</label>
+                            <input type="text" id="preneur1_profession" placeholder="Profession">
+                        </div>
+                    </div>
+                </div>
+                <div class="buttons" style="margin-top: 15px;">
+                    <button class="btn btn-info" type="button" onclick="addPreneur()">➕ Ajouter un preneur</button>
+                    <button class="btn btn-primary" type="button" onclick="removePreneur()" id="removeBtn" style="display:none;">➖ Supprimer le dernier preneur</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">MOTIF DE LA MOBILITÉ</div>
+                <div class="motif-highlight">
+                    <p><strong>⚠️ Important :</strong> Le bail mobilité ne peut être conclu qu'en raison d'un motif légitime de mobilité</p>
                 </div>
                 <div class="form-group">
                     <label>Motif :</label>
-                    <select id="motif_mobilite" required data-validation="required">
+                    <select id="motif_mobilite">
                         <option value="">Sélectionner le motif</option>
                         <option value="formation_professionnelle">Formation professionnelle</option>
                         <option value="etudes_superieures">Études supérieures</option>
                         <option value="contrat_apprentissage">Contrat d'apprentissage</option>
                         <option value="stage">Stage</option>
+                        <option value="engagement_volontaire">Engagement volontaire dans le cadre d'un service civique</option>
                         <option value="mutation_professionnelle">Mutation professionnelle</option>
+                        <option value="mission_temporaire">Mission temporaire dans le cadre de l'activité professionnelle</option>
+                        <option value="autre">Autre</option>
                     </select>
-                    <span class="error-message">Ce champ est requis</span>
+                </div>
+                <div class="form-group">
+                    <label>Précisions sur le motif :</label>
+                    <textarea id="motif_detail" placeholder="Détaillez le motif de mobilité (nom de l'établissement, entreprise, organisme...)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="show_justificatif" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Ajouter un justificatif fourni
+                    </label>
+                </div>
+                <div class="form-group" id="justificatif_group" style="display: none;">
+                    <label>Justificatif fourni :</label>
+                    <input type="text" id="justificatif" placeholder="Ex: Attestation d'inscription, contrat de travail, convention de stage...">
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">SIGNATURE ÉLECTRONIQUE (Optionnel)</div>
-                <div class="signature-canvas-container">
-                    <p>Signature du bailleur :</p>
-                    <canvas id="signatureCanvas" width="400" height="150"></canvas>
-                    <div style="margin-top: 10px;">
-                        <button type="button" class="btn btn-info" onclick="clearSignature()">🗑️ Effacer la signature</button>
+                <div class="section-title">DÉSIGNATION DU LOGEMENT</div>
+                <div class="form-group">
+                    <label>Adresse :</label>
+                    <textarea id="logement_adresse" placeholder="Adresse complète du logement"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Code postal :</label>
+                        <input type="text" id="logement_cp" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville :</label>
+                        <input type="text" id="logement_ville" placeholder="Paris">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type de logement :</label>
+                        <select id="logement_type">
+                            <option value="">Sélectionner</option>
+                            <option value="Studio">Studio</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="Maison">Maison</option>
+                            <option value="Chambre">Chambre</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Surface habitable :</label>
+                        <input type="number" id="logement_surface" placeholder="m²" class="amount-input">
+                    </div>
+                </div>
+                
+                <div class="preneur-block" style="background-color: #f0f8ff; border-color: #3498db;">
+                    <h4 style="color: #2c3e50;">📋 ÉQUIPEMENTS PAR PIÈCE</h4>
+                    <div id="equipements-supplementaires">
+                        <div class="equipement-supplementaire">
+                            <select class="piece-select">
+                                <option value="">Pièce</option>
+                                <option value="Salon">Salon</option>
+                                <option value="Cuisine">Cuisine</option>
+                                <option value="Chambre">Chambre</option>
+                                <option value="Chambre 1">Chambre 1</option>
+                                <option value="Chambre 2">Chambre 2</option>
+                                <option value="Chambre 3">Chambre 3</option>
+                                <option value="Chambre 4">Chambre 4</option>
+                                <option value="Salle de bain">Salle de bain</option>
+                                <option value="WC">WC</option>
+                                <option value="Entrée">Entrée</option>
+                                <option value="Balcon">Balcon</option>
+                                <option value="Terrasse">Terrasse</option>
+                                <option value="Cave">Cave</option>
+                                <option value="Garage">Garage</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                            <input type="text" class="equipement-input" placeholder="Équipement (ex: Lit double, Table, Micro-ondes...)">
+                            <button type="button" onclick="removeEquipementLine(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer;">🗑️</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addEquipementLine()" class="btn btn-info" style="padding: 8px 15px; font-size: 14px; margin-top: 10px;">➕ Ajouter un équipement</button>
+                    
+                    <div style="margin-top: 15px; padding: 10px; background-color: #e8f5e8; border-radius: 5px;">
+                        <p style="font-size: 12px; color: #27ae60; margin: 0;"><strong>💡 Astuce :</strong> Ajoutez tous les équipements présents dans le logement. La liste sera automatiquement générée dans le champ ci-dessous.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Équipements meublés :</label>
+                    <textarea id="logement_equipements" placeholder="Liste détaillée du mobilier et équipements (obligatoire pour bail mobilité)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Dépendances :</label>
+                    <input type="text" id="logement_dependances" placeholder="Cave, garage, parking, jardin...">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">DURÉE DU BAIL</div>
+                <div class="mobility-notice">
+                    <p><strong>Spécificités du bail mobilité :</strong></p>
+                    <ul>
+                        <li>Durée minimum : 1 mois</li>
+                        <li>Durée maximum : 10 mois</li>
+                        <li>Non renouvelable</li>
+                        <li>Non reconductible</li>
+                    </ul>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Durée :</label>
+                        <select id="duree_bail">
+                            <option value="1 mois">1 mois</option>
+                            <option value="2 mois">2 mois</option>
+                            <option value="3 mois">3 mois</option>
+                            <option value="4 mois">4 mois</option>
+                            <option value="5 mois">5 mois</option>
+                            <option value="6 mois">6 mois</option>
+                            <option value="7 mois">7 mois</option>
+                            <option value="8 mois">8 mois</option>
+                            <option value="9 mois">9 mois</option>
+                            <option value="10 mois">10 mois</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date de début :</label>
+                        <input type="date" id="date_debut">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Date de fin :</label>
+                    <input type="date" id="date_fin">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">LOYER ET CHARGES</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Loyer mensuel :</label>
+                        <input type="number" id="loyer_mensuel" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Charges forfaitaires :</label>
+                        <input type="number" id="charges" placeholder="€" class="amount-input" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Charges incluses :</label>
+                    <textarea id="charges_detail" placeholder="Eau, électricité, gaz, internet, ordures ménagères..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="show_charges_exclues" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Préciser ce qui n'est pas inclus dans le loyer
+                    </label>
+                </div>
+                <div class="form-group" id="charges_exclues_group" style="display: none;">
+                    <label>Charges non incluses :</label>
+                    <textarea id="charges_exclues" placeholder="Ex: Électricité au-delà de 50kWh/mois, internet, assurance habitation..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Loyer total mensuel :</label>
+                    <input type="number" id="loyer_total" placeholder="€" class="amount-input calculated" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Mode de paiement :</label>
+                    <select id="mode_paiement">
+                        <option value="virement bancaire">Virement bancaire</option>
+                        <option value="chèque">Chèque</option>
+                        <option value="prélèvement automatique">Prélèvement automatique</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jour de paiement :</label>
+                    <select id="jour_paiement">
+                        <option value="1">1er du mois</option>
+                        <option value="5">5 du mois</option>
+                        <option value="10">10 du mois</option>
+                        <option value="15">15 du mois</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">GARANTIE ET CAUTIONNAIRE</div>
+                <div class="mobility-notice">
+                    <p><strong>Pour le bail mobilité :</strong> Aucun dépôt de garantie ne peut être exigé, mais possibilité de demander un cautionnaire</p>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="show_caution" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Demander un cautionnaire
+                    </label>
+                </div>
+                <div id="caution_group" style="display: none;">
+                    <div class="preneur-block">
+                        <h4>Informations du Cautionnaire</h4>
+                        <div class="form-group">
+                            <label>Type de caution :</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="type_caution" value="simple"> Caution simple</label>
+                                <label><input type="radio" name="type_caution" value="solidaire"> Caution solidaire</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom et prénom :</label>
+                                <input type="text" id="caution_nom" placeholder="NOM Prénom du cautionnaire">
+                            </div>
+                            <div class="form-group">
+                                <label>Né(e) le :</label>
+                                <input type="date" id="caution_naissance">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu de naissance :</label>
+                            <input type="text" id="caution_lieu_naissance" placeholder="Ville">
+                        </div>
+                        <div class="form-group">
+                            <label>Domicilié(e) :</label>
+                            <textarea id="caution_adresse" placeholder="Adresse complète du cautionnaire"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Téléphone :</label>
+                                <input type="tel" id="caution_tel" placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group">
+                                <label>Email :</label>
+                                <input type="email" id="caution_email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Profession :</label>
+                            <input type="text" id="caution_profession" placeholder="Profession du cautionnaire">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Autres garanties :</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="autres_garanties" value="aucune"> Aucune autre garantie</label>
+                        <label><input type="radio" name="autres_garanties" value="assurance"> Assurance loyers impayés</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">RÉSILIATION</div>
+                <div class="mobility-notice">
+                    <p><strong>Spécificités :</strong> Le bail prend fin automatiquement à la date prévue. Préavis d'1 mois pour résiliation anticipée par le locataire.</p>
+                </div>
+                <div class="form-group">
+                    <label>Préavis locataire :</label>
+                    <input type="text" value="1 mois" readonly class="calculated">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">CLAUSES PARTICULIÈRES</div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="show_cheque_menage" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Inclure une provision pour ménage (chèque non encaissé)
+                    </label>
+                </div>
+                <div id="cheque_menage_group" style="display: none;">
+                    <div class="form-group">
+                        <label>Montant du chèque :</label>
+                        <input type="number" id="cheque_menage_montant" placeholder="150" value="150" class="amount-input" step="0.01">
+                        <span style="margin-left: 5px;">€</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="show_animaux" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Inclure une clause sur les animaux
+                    </label>
+                </div>
+                <div id="animaux_group" style="display: none;">
+                    <div class="form-group">
+                        <label>Animaux :</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="animaux" value="interdits"> Interdits</label>
+                            <label><input type="radio" name="animaux" value="autorises"> Autorisés</label>
+                            <label><input type="radio" name="animaux" value="autorises_conditions"> Autorisés sous conditions</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Autres clauses :</label>
+                    <textarea id="clauses_particulieres" placeholder="Ajoutez ici toute clause particulière..."></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">SIGNATURE</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Lieu de signature :</label>
+                        <input type="text" id="lieu_signature" placeholder="Ville">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de signature :</label>
+                        <input type="date" id="date_signature">
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="preview-mode" id="preview">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+
+        <div class="important-notice">
+            <h4>⚠️ MENTIONS LÉGALES IMPORTANTES - BAIL MOBILITÉ</h4>
+            <ul>
+                <li>Durée strictement limitée entre 1 et 10 mois</li>
+                <li>Non renouvelable et non reconductible</li>
+                <li>Réservé aux personnes justifiant d'un motif de mobilité</li>
+                <li>Pas de dépôt de garantie autorisé</li>
+                <li>Logement obligatoirement meublé</li>
+                <li>Préavis d'1 mois pour résiliation anticipée par le locataire</li>
+            </ul>
+        </div>
+
         <div class="buttons">
-            <button class="btn btn-primary" onclick="validateAndPreview()">📄 Aperçu du bail</button>
+            <button class="btn btn-primary" onclick="previewBail()">📄 Aperçu du bail</button>
+            <button class="btn btn-info" onclick="editBail()" style="display:none;" id="editBtn">✏️ Modifier</button>
             <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer</button>
-            <button class="btn btn-info" onclick="exportToPDF()">📥 Télécharger PDF</button>
+            <button class="btn btn-success" onclick="exportToPDF()">📥 Télécharger PDF</button>
             <button class="btn btn-primary" onclick="saveBail()">💾 Sauvegarder</button>
             <button class="btn btn-info" onclick="loadBail()">📂 Charger</button>
         </div>
     </div>
 
     <script>
-        // Variables globales
-        let autoSaveInterval;
-        let signaturePad;
+        let preneurCount = 1;
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeSignaturePad();
-            setupAutoSave();
-            attachValidationListeners();
-            updateProgress();
-            loadTheme();
+        function addPreneur() {
+            preneurCount++;
+            const container = document.getElementById('preneurs-container');
+            const newPreneur = document.createElement('div');
+            newPreneur.className = 'preneur-block';
+            newPreneur.setAttribute('data-preneur', preneurCount);
+            
+            newPreneur.innerHTML = `
+                <h4>Preneur ${preneurCount}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom et prénom :</label>
+                        <input type="text" id="preneur${preneurCount}_nom" placeholder="NOM Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Né(e) le :</label>
+                        <input type="date" id="preneur${preneurCount}_naissance">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lieu de naissance :</label>
+                    <input type="text" id="preneur${preneurCount}_lieu_naissance" placeholder="Ville">
+                </div>
+                <div class="form-group">
+                    <label>Domicilié(e) :</label>
+                    <textarea id="preneur${preneurCount}_adresse" placeholder="Adresse complète"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone :</label>
+                        <input type="tel" id="preneur${preneurCount}_tel" placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" id="preneur${preneurCount}_email" placeholder="email@exemple.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Profession :</label>
+                    <input type="text" id="preneur${preneurCount}_profession" placeholder="Profession">
+                </div>
+            `;
+            
+            container.appendChild(newPreneur);
+            document.getElementById('removeBtn').style.display = 'inline-block';
+        }
+
+        function removePreneur() {
+            if (preneurCount > 1) {
+                const container = document.getElementById('preneurs-container');
+                const lastPreneur = container.querySelector(`[data-preneur="${preneurCount}"]`);
+                if (lastPreneur) {
+                    container.removeChild(lastPreneur);
+                    preneurCount--;
+                }
+            }
+            
+            if (preneurCount <= 1) {
+                document.getElementById('removeBtn').style.display = 'none';
+            }
+        }
+
+        // Gestion de l'affichage des détails de caution
+        document.getElementById('show_caution').addEventListener('change', function() {
+            const cautionGroup = document.getElementById('caution_group');
+            cautionGroup.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.getElementById('caution_nom').value = '';
+                document.getElementById('caution_naissance').value = '';
+                document.getElementById('caution_lieu_naissance').value = '';
+                document.getElementById('caution_adresse').value = '';
+                document.getElementById('caution_tel').value = '';
+                document.getElementById('caution_email').value = '';
+                document.getElementById('caution_profession').value = '';
+                document.querySelectorAll('input[name="type_caution"]').forEach(radio => {
+                    radio.checked = false;
+                });
+            }
         });
 
-        // Gestion de la signature
-        function initializeSignaturePad() {
-            const canvas = document.getElementById('signatureCanvas');
-            const ctx = canvas.getContext('2d');
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-
-            // Support tactile
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', stopDrawing);
-
-            function startDrawing(e) {
-                isDrawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
+        // Gestion de l'affichage du justificatif
+        document.getElementById('show_justificatif').addEventListener('change', function() {
+            const justificatifGroup = document.getElementById('justificatif_group');
+            justificatifGroup.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.getElementById('justificatif').value = '';
             }
+        });
 
-            function draw(e) {
-                if (!isDrawing) return;
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-                [lastX, lastY] = [e.offsetX, e.offsetY];
+        // Gestion de l'affichage des charges exclues
+        document.getElementById('show_charges_exclues').addEventListener('change', function() {
+            const chargesExcluesGroup = document.getElementById('charges_exclues_group');
+            chargesExcluesGroup.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.getElementById('charges_exclues').value = '';
             }
+        });
 
-            function stopDrawing() {
-                isDrawing = false;
+        // Gestion de l'affichage de la provision ménage
+        document.getElementById('show_cheque_menage').addEventListener('change', function() {
+            const chequeMenageGroup = document.getElementById('cheque_menage_group');
+            chequeMenageGroup.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.getElementById('cheque_menage_montant').value = '150';
             }
+        });
 
-            function handleTouchStart(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                isDrawing = true;
-                lastX = touch.clientX - rect.left;
-                lastY = touch.clientY - rect.top;
-            }
-
-            function handleTouchMove(e) {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
-
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-
-                lastX = x;
-                lastY = y;
-            }
-        }
-
-        function clearSignature() {
-            const canvas = document.getElementById('signatureCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Sauvegarde automatique
-        function setupAutoSave() {
-            autoSaveInterval = setInterval(() => {
-                saveToLocalStorage();
-                showAutoSaveIndicator();
-            }, 30000); // 30 secondes
-
-            // Sauvegarder aussi à chaque changement
-            document.querySelectorAll('input, textarea, select').forEach(element => {
-                element.addEventListener('change', () => {
-                    setTimeout(saveToLocalStorage, 1000);
+        // Gestion de l'affichage de la section animaux
+        document.getElementById('show_animaux').addEventListener('change', function() {
+            const animauxGroup = document.getElementById('animaux_group');
+            animauxGroup.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.querySelectorAll('input[name="animaux"]').forEach(radio => {
+                    radio.checked = false;
                 });
+            }
+        });
+
+        // Gestion des équipements par pièce
+        function attachEquipementListeners() {
+            document.querySelectorAll('.piece-select, .equipement-input').forEach(element => {
+                element.removeEventListener('input', updateEquipementsList);
+                element.removeEventListener('change', updateEquipementsList);
+                element.addEventListener('input', updateEquipementsList);
+                element.addEventListener('change', updateEquipementsList);
             });
         }
 
-        function saveToLocalStorage() {
-            const data = collectFormData();
-            localStorage.setItem('bail_mobilite_autosave', JSON.stringify(data));
+        function addEquipementLine() {
+            const container = document.getElementById('equipements-supplementaires');
+            const newLine = document.createElement('div');
+            newLine.className = 'equipement-supplementaire';
+            
+            newLine.innerHTML = `
+                <select class="piece-select">
+                    <option value="">Pièce</option>
+                    <option value="Salon">Salon</option>
+                    <option value="Cuisine">Cuisine</option>
+                    <option value="Chambre">Chambre</option>
+                    <option value="Chambre 1">Chambre 1</option>
+                    <option value="Chambre 2">Chambre 2</option>
+                    <option value="Chambre 3">Chambre 3</option>
+                    <option value="Chambre 4">Chambre 4</option>
+                    <option value="Salle de bain">Salle de bain</option>
+                    <option value="WC">WC</option>
+                    <option value="Entrée">Entrée</option>
+                    <option value="Balcon">Balcon</option>
+                    <option value="Terrasse">Terrasse</option>
+                    <option value="Cave">Cave</option>
+                    <option value="Garage">Garage</option>
+                    <option value="Autre">Autre</option>
+                </select>
+                <input type="text" class="equipement-input" placeholder="Équipement (ex: Lit double, Table, Micro-ondes...)">
+                <button type="button" onclick="removeEquipementLine(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer;">🗑️</button>
+            `;
+            
+            container.appendChild(newLine);
+            attachEquipementListeners();
         }
 
-        function loadFromStorage() {
-            const saved = localStorage.getItem('bail_mobilite_autosave');
-            if (saved) {
-                if (confirm('Voulez-vous reprendre votre dernière saisie ?')) {
-                    fillFormData(JSON.parse(saved));
-                }
-            } else {
-                alert('Aucune sauvegarde trouvée.');
-            }
+        function removeEquipementLine(button) {
+            const line = button.parentElement;
+            line.remove();
+            updateEquipementsList();
         }
 
-        function showAutoSaveIndicator() {
-            const indicator = document.getElementById('autosaveIndicator');
-            indicator.classList.add('show');
-            setTimeout(() => {
-                indicator.classList.remove('show');
-            }, 2000);
-        }
-
-        // Validation
-        function attachValidationListeners() {
-            document.querySelectorAll('[data-validation]').forEach(element => {
-                element.addEventListener('blur', () => validateField(element));
-                element.addEventListener('input', () => {
-                    if (element.classList.contains('error')) {
-                        validateField(element);
+        function updateEquipementsList() {
+            const equipementsSupplementaires = {};
+            document.querySelectorAll('.equipement-supplementaire').forEach(line => {
+                const piece = line.querySelector('.piece-select').value;
+                const equipement = line.querySelector('.equipement-input').value.trim();
+                
+                if (piece && equipement) {
+                    if (!equipementsSupplementaires[piece]) {
+                        equipementsSupplementaires[piece] = [];
                     }
-                    updateProgress();
-                });
-            });
-        }
-
-        function validateField(field) {
-            const validation = field.getAttribute('data-validation');
-            const errorMsg = field.parentElement.querySelector('.error-message');
-            let isValid = true;
-
-            if (validation === 'required' && !field.value.trim()) {
-                isValid = false;
-            }
-
-            if (isValid) {
-                field.classList.remove('error');
-                if (errorMsg) errorMsg.classList.remove('show');
-            } else {
-                field.classList.add('error');
-                if (errorMsg) errorMsg.classList.add('show');
-            }
-
-            return isValid;
-        }
-
-        function validateAndPreview() {
-            let isValid = true;
-            document.querySelectorAll('[data-validation="required"]').forEach(field => {
-                if (!validateField(field)) {
-                    isValid = false;
+                    equipementsSupplementaires[piece].push(equipement);
                 }
             });
 
-            if (!isValid) {
-                alert('⚠️ Veuillez remplir tous les champs obligatoires avant de continuer.');
-                return false;
-            }
-
-            previewBail();
-        }
-
-        // Progression
-        function updateProgress() {
-            const requiredFields = document.querySelectorAll('[data-validation="required"]');
-            let filled = 0;
-
-            requiredFields.forEach(field => {
-                if (field.value.trim()) {
-                    filled++;
-                }
-            });
-
-            const percentage = Math.round((filled / requiredFields.length) * 100);
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('progressText').textContent = percentage + '% complété (' + filled + '/' + requiredFields.length + ' champs)';
-        }
-
-        // Template exemple
-        function loadTemplate() {
-            if (confirm('Charger un exemple de données ? Cela écrasera vos données actuelles.')) {
-                const template = {
-                    bailleur_nom: 'DUPONT Jean',
-                    bailleur_naissance: '1980-05-15',
-                    bailleur_adresse: '123 Avenue des Champs\n75008 Paris',
-                    motif_mobilite: 'etudes_superieures'
-                };
-                fillFormData(template);
-                updateProgress();
-            }
-        }
-
-        function clearForm() {
-            if (confirm('Voulez-vous vraiment effacer le formulaire ?')) {
-                document.querySelectorAll('input, textarea, select').forEach(el => {
-                    if (el.type !== 'button' && el.type !== 'submit') {
-                        el.value = '';
-                    }
+            let equipementsList = '';
+            if (Object.keys(equipementsSupplementaires).length > 0) {
+                equipementsList += '📍 ÉQUIPEMENTS PAR PIÈCE :\n\n';
+                
+                Object.keys(equipementsSupplementaires).forEach(piece => {
+                    equipementsList += `${piece} :\n`;
+                    equipementsSupplementaires[piece].forEach(equipement => {
+                        equipementsList += `• ${equipement}\n`;
+                    });
+                    equipementsList += '\n';
                 });
-                clearSignature();
-                updateProgress();
+            }
+
+            equipementsList = equipementsList.trim();
+            document.getElementById('logement_equipements').value = equipementsList;
+        }
+
+        // Attacher les listeners au chargement initial
+        window.addEventListener('DOMContentLoaded', function() {
+            attachEquipementListeners();
+        });
+
+        // Calcul automatique du loyer total
+        function calculateTotal() {
+            const loyer = parseFloat(document.getElementById('loyer_mensuel').value) || 0;
+            const charges = parseFloat(document.getElementById('charges').value) || 0;
+            document.getElementById('loyer_total').value = (loyer + charges).toFixed(2);
+        }
+
+        document.getElementById('loyer_mensuel').addEventListener('input', calculateTotal);
+        document.getElementById('charges').addEventListener('input', calculateTotal);
+
+        // Calcul automatique de la date de fin
+        function calculateEndDate() {
+            const startDate = document.getElementById('date_debut').value;
+            const duration = document.getElementById('duree_bail').value;
+            
+            if (startDate && duration) {
+                const start = new Date(startDate);
+                let end = new Date(start);
+                
+                const months = parseInt(duration);
+                end.setMonth(start.getMonth() + months);
+                end.setDate(end.getDate() - 1);
+                
+                document.getElementById('date_fin').value = end.toISOString().split('T')[0];
             }
         }
 
-        // Thème sombre
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+        document.getElementById('date_debut').addEventListener('change', calculateEndDate);
+        document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
+
+        // Initialiser la date du jour
+        document.getElementById('date_signature').value = new Date().toISOString().split('T')[0];
+
+        function previewBail() {
+            try {
+                const formData = collectFormData();
+                const preview = document.getElementById('preview');
+                
+                preview.innerHTML = generateBailHTML(formData);
+                
+                document.querySelector('.edit-mode').classList.add('hidden');
+                document.querySelector('.header').classList.add('hidden');
+                document.querySelector('.preview-mode').classList.add('active');
+                document.getElementById('editBtn').style.display = 'inline-block';
+            } catch (error) {
+                console.error('Erreur lors de la génération de l\'aperçu:', error);
+                alert('Erreur lors de la génération de l\'aperçu: ' + error.message);
+            }
         }
 
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+        function editBail() {
+            document.querySelector('.edit-mode').classList.remove('hidden');
+            document.querySelector('.header').classList.remove('hidden');
+            document.querySelector('.preview-mode').classList.remove('active');
+            document.getElementById('editBtn').style.display = 'none';
         }
 
-        // Export PDF
-        function exportToPDF() {
-            const element = document.querySelector('.container');
-            const opt = {
-                margin: 10,
-                filename: 'bail_mobilite.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-
-        // Fonctions de base
         function collectFormData() {
-            return {
+            const data = {
                 bailleur_nom: document.getElementById('bailleur_nom').value,
                 bailleur_naissance: document.getElementById('bailleur_naissance').value,
+                bailleur_lieu_naissance: document.getElementById('bailleur_lieu_naissance').value,
                 bailleur_adresse: document.getElementById('bailleur_adresse').value,
-                motif_mobilite: document.getElementById('motif_mobilite').value
+                bailleur_tel: document.getElementById('bailleur_tel').value,
+                bailleur_email: document.getElementById('bailleur_email').value,
+                
+                preneurs: [],
+                
+                motif_mobilite: document.getElementById('motif_mobilite').value,
+                motif_detail: document.getElementById('motif_detail').value,
+                justificatif: document.getElementById('justificatif').value,
+                
+                logement_adresse: document.getElementById('logement_adresse').value,
+                logement_cp: document.getElementById('logement_cp').value,
+                logement_ville: document.getElementById('logement_ville').value,
+                logement_type: document.getElementById('logement_type').value,
+                logement_surface: document.getElementById('logement_surface').value,
+                logement_equipements: document.getElementById('logement_equipements').value,
+                logement_dependances: document.getElementById('logement_dependances').value,
+                
+                equipements_supplementaires: Array.from(document.querySelectorAll('.equipement-supplementaire')).map(line => ({
+                    piece: line.querySelector('.piece-select').value,
+                    equipement: line.querySelector('.equipement-input').value
+                })),
+                
+                duree_bail: document.getElementById('duree_bail').value,
+                date_debut: document.getElementById('date_debut').value,
+                date_fin: document.getElementById('date_fin').value,
+                
+                loyer_mensuel: document.getElementById('loyer_mensuel').value,
+                charges: document.getElementById('charges').value,
+                charges_detail: document.getElementById('charges_detail').value,
+                show_charges_exclues: document.getElementById('show_charges_exclues').checked,
+                charges_exclues: document.getElementById('charges_exclues').value,
+                loyer_total: document.getElementById('loyer_total').value,
+                mode_paiement: document.getElementById('mode_paiement').value,
+                jour_paiement: document.getElementById('jour_paiement').value,
+                
+                show_caution: document.getElementById('show_caution').checked,
+                type_caution: document.querySelector('input[name="type_caution"]:checked')?.value || '',
+                caution_nom: document.getElementById('caution_nom').value,
+                caution_naissance: document.getElementById('caution_naissance').value,
+                caution_lieu_naissance: document.getElementById('caution_lieu_naissance').value,
+                caution_adresse: document.getElementById('caution_adresse').value,
+                caution_tel: document.getElementById('caution_tel').value,
+                caution_email: document.getElementById('caution_email').value,
+                caution_profession: document.getElementById('caution_profession').value,
+                autres_garanties: document.querySelector('input[name="autres_garanties"]:checked')?.value || '',
+                
+                show_cheque_menage: document.getElementById('show_cheque_menage').checked,
+                cheque_menage_montant: document.getElementById('cheque_menage_montant').value,
+                animaux: document.querySelector('input[name="animaux"]:checked')?.value || '',
+                clauses_particulieres: document.getElementById('clauses_particulieres').value,
+                lieu_signature: document.getElementById('lieu_signature').value,
+                date_signature: document.getElementById('date_signature').value
             };
+            
+            for (let i = 1; i <= preneurCount; i++) {
+                const preneurData = {
+                    nom: document.getElementById(`preneur${i}_nom`)?.value || '',
+                    naissance: document.getElementById(`preneur${i}_naissance`)?.value || '',
+                    lieu_naissance: document.getElementById(`preneur${i}_lieu_naissance`)?.value || '',
+                    adresse: document.getElementById(`preneur${i}_adresse`)?.value || '',
+                    tel: document.getElementById(`preneur${i}_tel`)?.value || '',
+                    email: document.getElementById(`preneur${i}_email`)?.value || '',
+                    profession: document.getElementById(`preneur${i}_profession`)?.value || ''
+                };
+                data.preneurs.push(preneurData);
+            }
+            
+            return data;
         }
 
-        function fillFormData(data) {
-            Object.keys(data).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    element.value = data[key];
+        function generateBailHTML(data) {
+            return `
+                <h1>CONTRAT DE BAIL MOBILITÉ</h1>
+                <h2>Location meublée de courte durée</h2>
+                <h3>(Articles 25-12 à 25-14 de la loi du 6 juillet 1989 - Loi ELAN)</h3>
+                
+                <div class="section">
+                    <div class="section-title">LE BAILLEUR</div>
+                    <p><strong>Nom et prénom :</strong> ${data.bailleur_nom}</p>
+                    <p><strong>Né(e) le :</strong> ${formatDate(data.bailleur_naissance)} <strong>à</strong> ${data.bailleur_lieu_naissance}</p>
+                    <p><strong>Domicilié(e) :</strong> ${data.bailleur_adresse}</p>
+                    <p><strong>Téléphone :</strong> ${data.bailleur_tel}</p>
+                    <p><strong>Email :</strong> ${data.bailleur_email}</p>
+                    <p><em>Ci-après dénommé « le Bailleur »</em></p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">${data.preneurs.length > 1 ? 'LES PRENEURS' : 'LE PRENEUR'}</div>
+                    ${data.preneurs.map((preneur, index) => `
+                        ${data.preneurs.length > 1 ? `<h4>Preneur ${index + 1} :</h4>` : ''}
+                        <p><strong>Nom et prénom :</strong> ${preneur.nom}</p>
+                        <p><strong>Né(e) le :</strong> ${formatDate(preneur.naissance)} <strong>à</strong> ${preneur.lieu_naissance}</p>
+                        <p><strong>Domicilié(e) :</strong> ${preneur.adresse}</p>
+                        <p><strong>Téléphone :</strong> ${preneur.tel}</p>
+                        <p><strong>Email :</strong> ${preneur.email}</p>
+                        <p><strong>Profession :</strong> ${preneur.profession}</p>
+                        ${index < data.preneurs.length - 1 ? '<hr style="margin: 20px 0; border-color: #ecf0f1;">' : ''}
+                    `).join('')}
+                    <p><em>Ci-après dénommé${data.preneurs.length > 1 ? 's collectivement' : ''} « le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} »</em></p>
+                    ${data.preneurs.length > 1 ? '<p><strong>En cas de pluralité de preneurs :</strong> Les preneurs sont solidairement responsables de toutes les obligations du présent bail.</p>' : ''}
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 1 - OBJET ET MOTIF DE LA MOBILITÉ</div>
+                    <p>Le présent contrat a pour objet la location temporaire du logement meublé ci-après désigné, dans le cadre d'un <strong>bail mobilité</strong> tel que défini par les articles 25-12 à 25-14 de la loi du 6 juillet 1989.</p>
+                    <p><strong>Motif de la mobilité :</strong> ${getMotifText(data.motif_mobilite)}</p>
+                    ${data.motif_detail ? `<p><strong>Précisions :</strong> ${data.motif_detail}</p>` : ''}
+                    ${data.justificatif ? `<p><strong>Justificatif fourni :</strong> ${data.justificatif}</p>` : ''}
+                    <p><em>Le preneur déclare être en situation de mobilité professionnelle, scolaire ou de formation justifiant le recours au bail mobilité.</em></p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 2 - DÉSIGNATION DU LOGEMENT MEUBLÉ</div>
+                    <p><strong>Adresse :</strong> ${data.logement_adresse}</p>
+                    <p><strong>Code postal :</strong> ${data.logement_cp} <strong>Ville :</strong> ${data.logement_ville}</p>
+                    <p><strong>Type :</strong> ${data.logement_type}</p>
+                    <p><strong>Surface habitable :</strong> ${data.logement_surface} m²</p>
+                    <p><strong>Équipements et mobilier :</strong></p>
+                    <pre style="white-space: pre-wrap; font-family: inherit;">${data.logement_equipements}</pre>
+                    ${data.logement_dependances ? `<p><strong>Dépendances :</strong> ${data.logement_dependances}</p>` : ''}
+                    <p><em>Le logement est loué meublé conformément au décret n° 2015-981 du 31 juillet 2015.</em></p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 3 - DURÉE DU BAIL</div>
+                    <p>Le présent bail mobilité est conclu pour une durée de <strong>${data.duree_bail}</strong>, à compter du <strong>${formatDate(data.date_debut)}</strong> et prenant fin <strong>obligatoirement</strong> le <strong>${formatDate(data.date_fin)}</strong>.</p>
+                    <p><strong>Ce bail ne peut être ni renouvelé, ni reconduit tacitement.</strong></p>
+                    <p>La durée totale du bail ne peut excéder dix mois consécutifs et ne peut être inférieure à un mois.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 4 - LOYER ET CHARGES</div>
+                    <p><strong>Loyer mensuel :</strong> ${data.loyer_mensuel} € (${numberToWords(data.loyer_mensuel)} euros)</p>
+                    <p><strong>Charges forfaitaires :</strong> ${data.charges} € (${numberToWords(data.charges)} euros)</p>
+                    ${data.charges_detail ? `<p><em>Les charges forfaitaires comprennent : ${data.charges_detail}</em></p>` : ''}
+                    ${data.show_charges_exclues && data.charges_exclues ? `<p><em><strong>Charges non incluses dans le loyer :</strong> ${data.charges_exclues}</em></p>` : ''}
+                    <p><strong>Loyer total mensuel (charges comprises) :</strong> ${data.loyer_total} €</p>
+                    <p><strong>Modalités de paiement :</strong> Le loyer et les charges sont payables mensuellement à terme à échoir, au plus tard le ${data.jour_paiement} de chaque mois, par ${data.mode_paiement}.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 5 - GARANTIE ET CAUTIONNAIRE</div>
+                    ${getGarantieText(data)}
+                </div>
+
+                <div class="section">
+                    <div class="section-title">ARTICLE 6 - RÉSILIATION ANTICIPÉE</div>
+                    <p><strong>Par le preneur :</strong> Le${data.preneurs.length > 1 ? 's' : ''} preneur${data.preneurs.length > 1 ? 's' : ''} peut (peuvent) résilier le bail à tout moment en respectant un préavis d'<strong>un mois</strong> par lettre recommandée avec accusé de réception.</p>
+                    <p><strong>Par le bailleur :</strong> Le bailleur ne peut donner congé avant le terme prévu du bail, sauf manquement grave du preneur à ses obligations.</p>
+                    <p><strong>À l'expiration :</strong> Le bail prend fin automatiquement à la date prévue sans possibilité de reconduction.</p>
+                </div>
+
+                ${data.show_cheque_menage && data.cheque_menage_montant ? 
+                    `<div class="section"><div class="section-title">CLAUSE PARTICULIÈRE - PROVISION POUR MÉNAGE</div><p>Le preneur remet au bailleur un chèque de <strong>${data.cheque_menage_montant} euros</strong> à titre de provision pour les frais de ménage en fin de bail. Ce chèque ne sera pas encaissé sauf en cas de nécessité de remise en état du logement due à un défaut d'entretien ménager du preneur.</p></div>` : ''
                 }
+
+                ${data.animaux ? 
+                    `<div class="section"><div class="section-title">CLAUSE PARTICULIÈRE - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
+                }
+
+                ${data.clauses_particulieres ? 
+                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><p>${data.clauses_particulieres}</p></div>` : ''
+                }
+
+                <div class="section">
+                    <div class="section-title">DISPOSITIONS LÉGALES</div>
+                    <p>Le présent bail est soumis aux dispositions spécifiques du bail mobilité (articles 25-12 à 25-14 de la loi du 6 juillet 1989).</p>
+                    <p>Pour tout ce qui n'est pas prévu par ces dispositions spécifiques, le bail est soumis aux dispositions de la loi du 6 juillet 1989.</p>
+                </div>
+
+                <div class="signatures">
+                    <div class="signature-box">
+                        <strong>LE BAILLEUR</strong><br>
+                        <em>Lu et approuvé</em><br>
+                        <em>Bon pour accord</em>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="signature-box">
+                        <strong>LE${data.preneurs.length > 1 ? 'S' : ''} PRENEUR${data.preneurs.length > 1 ? 'S' : ''}</strong><br>
+                        <em>Lu et approuvé</em><br>
+                        <em>Bon pour accord</em>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+
+                ${data.show_caution && data.caution_nom ? `
+                <div style="margin-top: 30px; text-align: center;">
+                    <div class="signature-box" style="width: 100%; margin: 0 auto;">
+                        <strong>LE CAUTIONNAIRE</strong><br>
+                        <em>Lu et approuvé</em><br>
+                        <em>Bon pour cautionnement ${data.type_caution}</em>
+                        <div class="signature-line"></div>
+                        <em>${data.caution_nom}</em>
+                    </div>
+                </div>
+                ` : ''}
+
+                <p style="text-align: center; margin-top: 30px;">
+                    <strong>Fait à ${data.lieu_signature}, le ${formatDate(data.date_signature)}</strong><br>
+                    <strong>En deux exemplaires originaux</strong>
+                </p>
+            `;
+        }
+
+        function getMotifText(motif) {
+            const motifs = {
+                'formation_professionnelle': 'Formation professionnelle',
+                'etudes_superieures': 'Études supérieures',
+                'contrat_apprentissage': 'Contrat d\'apprentissage',
+                'stage': 'Stage',
+                'engagement_volontaire': 'Engagement volontaire dans le cadre d\'un service civique',
+                'mutation_professionnelle': 'Mutation professionnelle',
+                'mission_temporaire': 'Mission temporaire dans le cadre de l\'activité professionnelle',
+                'autre': 'Autre'
+            };
+            return motifs[motif] || motif;
+        }
+
+        function getGarantieText(data) {
+            let garantieHtml = '<p><strong>Dépôt de garantie :</strong> Aucun dépôt de garantie ne peut être exigé pour un bail mobilité.</p>';
+            
+            if (data.show_caution && data.caution_nom) {
+                garantieHtml += `
+                    <h4>Cautionnaire :</h4>
+                    <p><strong>Type de caution :</strong> ${data.type_caution === 'simple' ? 'Caution simple' : 'Caution solidaire'}</p>
+                    <p><strong>Nom et prénom :</strong> ${data.caution_nom}</p>
+                    <p><strong>Né(e) le :</strong> ${formatDate(data.caution_naissance)} <strong>à</strong> ${data.caution_lieu_naissance}</p>
+                    <p><strong>Domicilié(e) :</strong> ${data.caution_adresse}</p>
+                    <p><strong>Téléphone :</strong> ${data.caution_tel}</p>
+                    <p><strong>Email :</strong> ${data.caution_email}</p>
+                    <p><strong>Profession :</strong> ${data.caution_profession}</p>
+                    <p><em>La caution s'engage ${data.type_caution === 'solidaire' ? 'solidairement avec le preneur' : ''} au paiement des loyers et charges en cas de défaillance du preneur.</em></p>
+                `;
+            } else {
+                garantieHtml += '<p><strong>Cautionnaire :</strong> Aucun cautionnaire demandé.</p>';
+            }
+            
+            if (data.autres_garanties === 'assurance') {
+                garantieHtml += '<p><strong>Autres garanties :</strong> Assurance loyers impayés souscrite par le bailleur.</p>';
+            }
+            
+            return garantieHtml;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
             });
+        }
+
+        function numberToWords(num) {
+            const number = parseFloat(num);
+            if (isNaN(number)) return 'zéro';
+            
+            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+            const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+            
+            if (number < 20) {
+                return ones[Math.floor(number)] || number.toString();
+            } else if (number < 100) {
+                const tensDigit = Math.floor(number / 10);
+                const onesDigit = number % 10;
+                if (tensDigit === 7 || tensDigit === 9) {
+                    return tens[tensDigit - 1] + '-' + ones[10 + onesDigit];
+                } else {
+                    return tens[tensDigit] + (onesDigit > 0 ? '-' + ones[onesDigit] : '');
+                }
+            } else {
+                return number.toString();
+            }
+        }
+
+        function getAnimauxText(value) {
+            switch(value) {
+                case 'interdits': return 'Interdits';
+                case 'autorises': return 'Autorisés';
+                case 'autorises_conditions': return 'Autorisés sous conditions';
+                default: return '';
+            }
         }
 
         function saveBail() {
             const data = collectFormData();
             const dataStr = JSON.stringify(data, null, 2);
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
             const link = document.createElement('a');
             link.href = URL.createObjectURL(dataBlob);
             link.download = 'bail_mobilite.json';
@@ -708,7 +1429,6 @@
                         try {
                             const data = JSON.parse(e.target.result);
                             fillFormData(data);
-                            updateProgress();
                         } catch (error) {
                             alert('Erreur lors du chargement du fichier.');
                         }
@@ -719,43 +1439,269 @@
             input.click();
         }
 
-        function previewBail() {
-            alert('Fonction d\'aperçu - à implémenter selon vos besoins');
+        function fillFormData(data) {
+            Object.keys(data).forEach(key => {
+                if (key !== 'preneurs' && key !== 'equipements_supplementaires') {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'radio') {
+                            const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+                            if (radio) radio.checked = true;
+                        } else if (element.type === 'checkbox') {
+                            element.checked = data[key];
+                        } else {
+                            element.value = data[key];
+                        }
+                    }
+                }
+            });
+            
+            if (data.preneurs && data.preneurs.length > 0) {
+                while (preneurCount > 1) {
+                    removePreneur();
+                }
+                
+                const preneur1 = data.preneurs[0];
+                Object.keys(preneur1).forEach(key => {
+                    const element = document.getElementById(`preneur1_${key}`);
+                    if (element) element.value = preneur1[key];
+                });
+                
+                for (let i = 1; i < data.preneurs.length; i++) {
+                    addPreneur();
+                    const preneurData = data.preneurs[i];
+                    Object.keys(preneurData).forEach(key => {
+                        const element = document.getElementById(`preneur${i + 1}_${key}`);
+                        if (element) element.value = preneurData[key];
+                    });
+                }
+            }
+            
+            if (data.show_caution) {
+                document.getElementById('show_caution').checked = true;
+                document.getElementById('show_caution').dispatchEvent(new Event('change'));
+                if (data.type_caution) {
+                    const cautionRadio = document.querySelector(`input[name="type_caution"][value="${data.type_caution}"]`);
+                    if (cautionRadio) cautionRadio.checked = true;
+                }
+            }
+            
+            if (data.justificatif) {
+                document.getElementById('show_justificatif').checked = true;
+                document.getElementById('show_justificatif').dispatchEvent(new Event('change'));
+            }
+            
+            if (data.equipements_supplementaires && Array.isArray(data.equipements_supplementaires)) {
+                const container = document.getElementById('equipements-supplementaires');
+                const firstLine = container.querySelector('.equipement-supplementaire');
+                
+                data.equipements_supplementaires.forEach((item, index) => {
+                    if (item.piece || item.equipement) {
+                        let line;
+                        if (index === 0 && firstLine) {
+                            line = firstLine;
+                        } else {
+                            addEquipementLine();
+                            line = container.lastElementChild;
+                        }
+                        
+                        if (line) {
+                            line.querySelector('.piece-select').value = item.piece || '';
+                            line.querySelector('.equipement-input').value = item.equipement || '';
+                        }
+                    }
+                });
+                
+                updateEquipementsList();
+                attachEquipementListeners();
+            }
+            
+            if (data.show_charges_exclues) {
+                document.getElementById('show_charges_exclues').checked = true;
+                document.getElementById('show_charges_exclues').dispatchEvent(new Event('change'));
+            }
+            
+            if (data.show_cheque_menage) {
+                document.getElementById('show_cheque_menage').checked = true;
+                document.getElementById('show_cheque_menage').dispatchEvent(new Event('change'));
+            }
+            
+            if (data.animaux) {
+                document.getElementById('show_animaux').checked = true;
+                document.getElementById('show_animaux').dispatchEvent(new Event('change'));
+                const animalRadio = document.querySelector(`input[name="animaux"][value="${data.animaux}"]`);
+                if (animalRadio) animalRadio.checked = true;
+            }
+            
+            if (data.autres_garanties) {
+                const garantieRadio = document.querySelector(`input[name="autres_garanties"][value="${data.autres_garanties}"]`);
+                if (garantieRadio) garantieRadio.checked = true;
+            }
+            
+            calculateTotal();
         }
 
-        // Fonction numberToWords complète
-        function numberToWords(num) {
-            const number = Math.floor(parseFloat(num));
-            if (isNaN(number) || number < 0) return 'zéro';
-            if (number === 0) return 'zéro';
+        // ===== AMÉLIORATIONS V2 =====
 
-            const ones = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
-            const tens = ['', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
-            const hundreds = ['', 'cent', 'deux cents', 'trois cents', 'quatre cents', 'cinq cents', 'six cents', 'sept cents', 'huit cents', 'neuf cents'];
+        // Dark Mode Toggle
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
 
-            if (number < 17) return ones[number];
-            if (number < 20) return 'dix-' + ones[number - 10];
-            if (number < 100) {
-                const t = Math.floor(number / 10);
-                const o = number % 10;
-                if (t === 7 || t === 9) {
-                    return tens[t - 1] + '-' + ones[10 + o];
+        // Load saved theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            // Setup auto-save
+            setupAutoSave();
+
+            // Try to restore auto-saved data
+            const autoSaved = localStorage.getItem('bail_mobilite_autosave');
+            if (autoSaved) {
+                // Show restore button (optional - could auto-restore)
+                console.log('Auto-saved data available');
+            }
+        });
+
+        // Auto-save functionality
+        let autoSaveInterval;
+
+        function setupAutoSave() {
+            // Auto-save every 30 seconds
+            autoSaveInterval = setInterval(() => {
+                saveToLocalStorage();
+                showAutoSaveIndicator();
+            }, 30000);
+
+            // Also save on input change
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    saveToLocalStorage();
+                });
+            });
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                // Bailleur
+                bailleur_nom: document.getElementById('bailleur_nom')?.value || '',
+                bailleur_naissance: document.getElementById('bailleur_naissance')?.value || '',
+                bailleur_lieu_naissance: document.getElementById('bailleur_lieu_naissance')?.value || '',
+                bailleur_adresse: document.getElementById('bailleur_adresse')?.value || '',
+                bailleur_tel: document.getElementById('bailleur_tel')?.value || '',
+                bailleur_email: document.getElementById('bailleur_email')?.value || '',
+                // ... autres champs (simplification - ajouter tous les champs si nécessaire)
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('bail_mobilite_autosave', JSON.stringify(data));
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            if (indicator) {
+                indicator.classList.add('show');
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        // PDF Export functionality
+        function exportToPDF() {
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: 10,
+                filename: 'bail_mobilite_' + new Date().toISOString().split('T')[0] + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Check if html2pdf is loaded
+            if (typeof html2pdf === 'undefined') {
+                alert('Erreur: La bibliothèque PDF n\'est pas chargée. Vérifiez votre connexion internet.');
+                return;
+            }
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Improved numberToWords function (0-999999)
+        function numberToWordsImproved(num) {
+            if (num === 0) return 'zéro';
+
+            const units = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
+            const teens = ['dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize',
+                          'dix-sept', 'dix-huit', 'dix-neuf'];
+            const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante',
+                         'soixante', 'quatre-vingt', 'quatre-vingt'];
+
+            function convertHundreds(n) {
+                let result = '';
+
+                const h = Math.floor(n / 100);
+                const t = Math.floor((n % 100) / 10);
+                const u = n % 10;
+
+                if (h > 0) {
+                    result += (h === 1 ? 'cent' : units[h] + ' cent');
+                    if (h > 1 && t === 0 && u === 0) result += 's';
+                    if (t > 0 || u > 0) result += ' ';
                 }
-                if (t === 8 && o === 0) return 'quatre-vingts';
-                return tens[t] + (o > 0 ? '-' + ones[o] : '');
+
+                if (t === 1) {
+                    result += teens[u];
+                } else if (t >= 2) {
+                    if (t === 7 || t === 9) {
+                        const base = tens[t];
+                        if (u === 1 && t === 7) {
+                            result += base + ' et onze';
+                        } else {
+                            result += base + '-' + (t === 7 ? teens[u] : (u === 0 ? 'dix' : teens[u]));
+                        }
+                    } else {
+                        result += tens[t];
+                        if (u === 1 && (t === 2 || t === 3 || t === 4 || t === 5 || t === 6)) {
+                            result += ' et un';
+                        } else if (u > 1) {
+                            result += '-' + units[u];
+                        } else if (u === 0 && t === 8) {
+                            result += 's';
+                        }
+                    }
+                } else if (u > 0) {
+                    result += units[u];
+                }
+
+                return result;
             }
-            if (number < 1000) {
-                const h = Math.floor(number / 100);
-                const r = number % 100;
-                return hundreds[h] + (r > 0 ? ' ' + numberToWords(r) : '');
+
+            if (num < 1000) {
+                return convertHundreds(num);
+            } else if (num < 1000000) {
+                const thousands = Math.floor(num / 1000);
+                const remainder = num % 1000;
+
+                let result = '';
+                if (thousands === 1) {
+                    result = 'mille';
+                } else {
+                    result = convertHundreds(thousands) + ' mille';
+                }
+
+                if (remainder > 0) {
+                    result += ' ' + convertHundreds(remainder);
+                }
+
+                return result;
             }
-            if (number < 1000000) {
-                const t = Math.floor(number / 1000);
-                const r = number % 1000;
-                const tWord = t === 1 ? 'mille' : numberToWords(t) + ' mille';
-                return tWord + (r > 0 ? ' ' + numberToWords(r) : '');
-            }
-            return number.toString();
+
+            return num.toString();
         }
     </script>
 </body>
