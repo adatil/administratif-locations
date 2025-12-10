@@ -337,6 +337,41 @@
         .month-year-input {
             width: 120px !important;
         }
+
+        .custom-dates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .custom-dates-table th,
+        .custom-dates-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .custom-dates-table th {
+            background-color: #27ae60;
+            color: white;
+            font-weight: bold;
+        }
+
+        .custom-dates-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .custom-dates-table input[type="date"],
+        .custom-dates-table input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .custom-dates-table td {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -551,31 +586,50 @@
                 <div class="important-notice" style="margin-bottom: 15px;">
                     <p><strong>💡 Dates intelligentes :</strong> Les dates de paiement s'ajustent automatiquement selon le mois de chaque quittance (ex: 5 de chaque mois = 5 janvier, 5 février, etc.)</p>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Jour de paiement :</label>
-                        <select id="jour_paiement_mois">
-                            <option value="1">1er de chaque mois</option>
-                            <option value="5" selected>5 de chaque mois</option>
-                            <option value="10">10 de chaque mois</option>
-                            <option value="15">15 de chaque mois</option>
-                            <option value="31">Dernier jour de chaque mois</option>
-                            <option value="custom">Date personnalisée</option>
-                        </select>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="custom_dates_per_month" style="margin-right: 8px; width: auto; min-width: auto;">
+                        Personnaliser les dates pour chaque quittance
+                    </label>
+                </div>
+
+                <div id="standard_dates_group">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Jour de paiement :</label>
+                            <select id="jour_paiement_mois">
+                                <option value="1">1er de chaque mois</option>
+                                <option value="5" selected>5 de chaque mois</option>
+                                <option value="10">10 de chaque mois</option>
+                                <option value="15">15 de chaque mois</option>
+                                <option value="31">Dernier jour de chaque mois</option>
+                                <option value="custom">Date personnalisée</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="date_paiement_custom_group" style="display: none;">
+                            <label>Date de paiement :</label>
+                            <input type="date" id="date_paiement_custom">
+                        </div>
                     </div>
-                    <div class="form-group" id="date_paiement_custom_group" style="display: none;">
-                        <label>Date de paiement :</label>
-                        <input type="date" id="date_paiement_custom">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date d'établissement :</label>
+                            <input type="date" id="date_etablissement">
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu d'établissement :</label>
+                            <input type="text" id="lieu_etablissement" placeholder="Ville">
+                        </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Date d'établissement :</label>
-                        <input type="date" id="date_etablissement">
+
+                <div id="custom_dates_group" style="display: none;">
+                    <div class="important-notice" style="margin: 15px 0;">
+                        <p><strong>📅 Mode personnalisé :</strong> Définissez les dates de paiement et d'établissement pour chaque quittance individuellement.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Lieu d'établissement :</label>
-                        <input type="text" id="lieu_etablissement" placeholder="Ville">
+                    <div id="custom_dates_table_container">
+                        <!-- Le tableau sera généré dynamiquement par JavaScript -->
                     </div>
                 </div>
             </div>
@@ -669,6 +723,55 @@
             }
         });
 
+        // Gestion de la personnalisation des dates par mois
+        document.getElementById('custom_dates_per_month').addEventListener('change', function() {
+            const standardGroup = document.getElementById('standard_dates_group');
+            const customGroup = document.getElementById('custom_dates_group');
+
+            if (this.checked) {
+                standardGroup.style.display = 'none';
+                customGroup.style.display = 'block';
+                generateCustomDatesTable();
+            } else {
+                standardGroup.style.display = 'block';
+                customGroup.style.display = 'none';
+            }
+        });
+
+        // Mettre à jour le tableau des dates personnalisées quand la plage de mois change
+        document.getElementById('mois_debut').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked) {
+                generateCustomDatesTable();
+            }
+        });
+        document.getElementById('annee_debut').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked) {
+                generateCustomDatesTable();
+            }
+        });
+        document.getElementById('mois_fin').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked) {
+                generateCustomDatesTable();
+            }
+        });
+        document.getElementById('annee_fin').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked) {
+                generateCustomDatesTable();
+            }
+        });
+
+        // Mettre à jour le tableau pour le mode mois unique aussi
+        document.getElementById('mois_concerne').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked && !document.getElementById('multi_mois').checked) {
+                generateCustomDatesTable();
+            }
+        });
+        document.getElementById('annee_concerne').addEventListener('change', function() {
+            if (document.getElementById('custom_dates_per_month').checked && !document.getElementById('multi_mois').checked) {
+                generateCustomDatesTable();
+            }
+        });
+
         // Calcul automatique du total
         function calculateTotal() {
             const loyer = parseFloat(document.getElementById('loyer').value) || 0;
@@ -696,16 +799,62 @@
         document.getElementById('mois_concerne').value = months[currentMonth];
         document.getElementById('annee_concerne').value = currentYear;
 
+        // Génération du tableau des dates personnalisées
+        function generateCustomDatesTable() {
+            const monthsList = getMonthsList();
+            const container = document.getElementById('custom_dates_table_container');
+            const today = new Date().toISOString().split('T')[0];
+            const lieuEtablissement = document.getElementById('lieu_etablissement').value;
+
+            let tableHTML = '<table class="custom-dates-table">';
+            tableHTML += '<thead><tr>';
+            tableHTML += '<th>Quittance</th>';
+            tableHTML += '<th>Date de paiement</th>';
+            tableHTML += '<th>Date d\'établissement</th>';
+            tableHTML += '<th>Lieu d\'établissement</th>';
+            tableHTML += '</tr></thead><tbody>';
+
+            monthsList.forEach((monthData, index) => {
+                const monthKey = `${monthData.year}-${monthData.monthIndex}`;
+
+                // Calculer les dates par défaut (5 du mois pour le paiement, aujourd'hui pour l'établissement)
+                const defaultPaymentDate = new Date(monthData.year, monthData.monthIndex, 5).toISOString().split('T')[0];
+
+                tableHTML += '<tr>';
+                tableHTML += `<td><strong>${capitalizeFirstLetter(monthData.month)} ${monthData.year}</strong></td>`;
+                tableHTML += `<td><input type="date" id="custom_payment_${monthKey}" value="${defaultPaymentDate}" class="custom-date-input"></td>`;
+                tableHTML += `<td><input type="date" id="custom_establishment_${monthKey}" value="${today}" class="custom-date-input"></td>`;
+                tableHTML += `<td><input type="text" id="custom_lieu_${monthKey}" value="${lieuEtablissement}" placeholder="Ville" class="custom-date-input"></td>`;
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
         function calculatePaymentDate(monthData) {
+            // Vérifier si le mode personnalisé est activé
+            if (document.getElementById('custom_dates_per_month').checked) {
+                const monthKey = `${monthData.year}-${monthData.monthIndex}`;
+                const customInput = document.getElementById(`custom_payment_${monthKey}`);
+                if (customInput) {
+                    return customInput.value;
+                }
+            }
+
             const jourPaiement = document.getElementById('jour_paiement_mois').value;
-            
+
             if (jourPaiement === 'custom') {
                 return document.getElementById('date_paiement_custom').value;
             }
-            
+
             const year = monthData.year;
             const month = monthData.monthIndex; // 0-11
-            
+
             if (jourPaiement === '31') {
                 // Dernier jour du mois
                 const lastDay = new Date(year, month + 1, 0).getDate();
@@ -774,28 +923,47 @@
             const formData = collectFormData();
             const monthsList = getMonthsList();
             const preview = document.getElementById('preview');
-            
+
             let allQuittancesHTML = '';
-            
+
             monthsList.forEach((monthData, index) => {
+                // Récupérer les dates personnalisées si le mode est activé
+                let dateEtablissement = formData.date_etablissement;
+                let lieuEtablissement = formData.lieu_etablissement;
+
+                if (document.getElementById('custom_dates_per_month').checked) {
+                    const monthKey = `${monthData.year}-${monthData.monthIndex}`;
+                    const customEstablishmentInput = document.getElementById(`custom_establishment_${monthKey}`);
+                    const customLieuInput = document.getElementById(`custom_lieu_${monthKey}`);
+
+                    if (customEstablishmentInput) {
+                        dateEtablissement = customEstablishmentInput.value;
+                    }
+                    if (customLieuInput) {
+                        lieuEtablissement = customLieuInput.value;
+                    }
+                }
+
                 const quittanceData = {
                     ...formData,
                     mois_concerne: monthData.month,
                     annee_concerne: monthData.year,
                     date_paiement: calculatePaymentDate(monthData),
+                    date_etablissement: dateEtablissement,
+                    lieu_etablissement: lieuEtablissement,
                     signature_data_url: signatureDataUrl
                 };
-                
+
                 allQuittancesHTML += generateQuittanceHTML(quittanceData);
-                
+
                 // Ajouter une séparation entre les quittances (sauf pour la dernière)
                 if (index < monthsList.length - 1) {
                     allQuittancesHTML += '<div style="page-break-after: always; margin: 30px 0; border-top: 2px dashed #27ae60; text-align: center; padding: 10px; color: #27ae60; font-weight: bold;">Quittance suivante</div>';
                 }
             });
-            
+
             preview.innerHTML = allQuittancesHTML;
-            
+
             document.querySelector('.edit-mode').classList.add('hidden');
             document.querySelector('.preview-mode').classList.add('active');
             document.getElementById('editBtn').style.display = 'inline-block';
@@ -808,39 +976,67 @@
         }
 
         function collectFormData() {
-            return {
+            const data = {
                 bailleur_nom: document.getElementById('bailleur_nom').value,
                 bailleur_qualite: document.getElementById('bailleur_qualite').value,
                 bailleur_adresse: document.getElementById('bailleur_adresse').value,
                 bailleur_tel: document.getElementById('bailleur_tel').value,
                 bailleur_email: document.getElementById('bailleur_email').value,
-                
+
                 locataire_nom: document.getElementById('locataire_nom').value,
                 locataire_adresse: document.getElementById('locataire_adresse').value,
-                
+
                 logement_adresse: document.getElementById('logement_adresse').value,
                 logement_cp: document.getElementById('logement_cp').value,
                 logement_ville: document.getElementById('logement_ville').value,
                 logement_type: document.getElementById('logement_type').value,
-                
+
                 loyer: document.getElementById('loyer').value,
                 charges: document.getElementById('charges').value,
                 autres: document.getElementById('autres').value,
                 total_paye: document.getElementById('total_paye').value,
                 detail_charges: document.getElementById('detail_charges').value,
-                
+
                 jour_paiement_mois: document.getElementById('jour_paiement_mois').value,
                 date_paiement_custom: document.getElementById('date_paiement_custom').value,
                 date_etablissement: document.getElementById('date_etablissement').value,
                 lieu_etablissement: document.getElementById('lieu_etablissement').value,
-                
+
                 // Sauvegarder aussi les paramètres multi-mois
                 multi_mois: document.getElementById('multi_mois').checked,
                 mois_debut: document.getElementById('mois_debut').value,
                 annee_debut: document.getElementById('annee_debut').value,
                 mois_fin: document.getElementById('mois_fin').value,
-                annee_fin: document.getElementById('annee_fin').value
+                annee_fin: document.getElementById('annee_fin').value,
+
+                // Sauvegarder le mode de dates personnalisées
+                custom_dates_per_month: document.getElementById('custom_dates_per_month').checked
             };
+
+            // Si le mode dates personnalisées est activé, sauvegarder toutes les dates
+            if (data.custom_dates_per_month) {
+                const customDates = {};
+                const monthsList = getMonthsList();
+
+                monthsList.forEach(monthData => {
+                    const monthKey = `${monthData.year}-${monthData.monthIndex}`;
+                    const paymentInput = document.getElementById(`custom_payment_${monthKey}`);
+                    const establishmentInput = document.getElementById(`custom_establishment_${monthKey}`);
+                    const lieuInput = document.getElementById(`custom_lieu_${monthKey}`);
+
+                    if (paymentInput && establishmentInput && lieuInput) {
+                        customDates[monthKey] = {
+                            payment: paymentInput.value,
+                            establishment: establishmentInput.value,
+                            lieu: lieuInput.value
+                        };
+                    }
+                });
+
+                data.custom_dates = customDates;
+            }
+
+            return data;
         }
 
         function generateQuittanceHTML(data) {
@@ -1037,12 +1233,18 @@
 
         function fillFormData(data) {
             Object.keys(data).forEach(key => {
+                // Ignorer les données personnalisées (elles seront traitées séparément)
+                if (key === 'custom_dates') return;
+
                 const element = document.getElementById(key);
                 if (element) {
                     if (element.type === 'checkbox') {
                         element.checked = data[key];
                         // Déclencher l'événement change pour mettre à jour l'affichage
                         if (key === 'multi_mois') {
+                            element.dispatchEvent(new Event('change'));
+                        }
+                        if (key === 'custom_dates_per_month') {
                             element.dispatchEvent(new Event('change'));
                         }
                     } else {
@@ -1054,9 +1256,26 @@
                     }
                 }
             });
-            
+
             // Recalculer le total
             calculateTotal();
+
+            // Restaurer les dates personnalisées si elles existent
+            if (data.custom_dates_per_month && data.custom_dates) {
+                // Attendre que le tableau soit généré
+                setTimeout(() => {
+                    Object.keys(data.custom_dates).forEach(monthKey => {
+                        const dates = data.custom_dates[monthKey];
+                        const paymentInput = document.getElementById(`custom_payment_${monthKey}`);
+                        const establishmentInput = document.getElementById(`custom_establishment_${monthKey}`);
+                        const lieuInput = document.getElementById(`custom_lieu_${monthKey}`);
+
+                        if (paymentInput) paymentInput.value = dates.payment;
+                        if (establishmentInput) establishmentInput.value = dates.establishment;
+                        if (lieuInput) lieuInput.value = dates.lieu;
+                    });
+                }, 100);
+            }
         }
     </script>
 </body>
