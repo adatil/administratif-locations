@@ -292,9 +292,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>CONTRAT DE BAIL DE LOCATION MEUBLÉE</h1>
-            <h2>À TITRE DE RÉSIDENCE SECONDAIRE</h2>
-            <h3>(Articles 1708 et suivants du Code civil)</h3>
+            <h1>BAIL DE LOCATION MEUBLÉ</h1>
         </div>
 
         <div class="edit-mode">
@@ -350,8 +348,8 @@
                             <input type="text" id="preneur1_lieu_naissance" placeholder="Ville">
                         </div>
                         <div class="form-group">
-                            <label>Résidence PRINCIPALE :</label>
-                            <textarea id="preneur1_adresse_principale" placeholder="Adresse complète de la résidence principale"></textarea>
+                            <label>Résidence :</label>
+                            <textarea id="preneur1_adresse_principale" placeholder="Adresse complète de la résidence"></textarea>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -559,21 +557,18 @@
                         <input type="date" id="date_signature">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Signature numérisée du bailleur (optionnel) :</label>
+                    <input type="file" id="bailleur_signature" accept="image/*" onchange="loadSignature(event)">
+                </div>
+                <div id="signature-preview" style="margin-top: 10px; display: none;">
+                    <img id="signature-image" style="max-width: 200px; max-height: 100px; border: 1px solid #ccc; padding: 5px;">
+                </div>
             </div>
         </div>
 
         <div class="preview-mode" id="preview">
             <!-- Le contenu sera généré par JavaScript -->
-        </div>
-
-        <div class="important-notice">
-            <h4>⚠️ MENTIONS LÉGALES IMPORTANTES</h4>
-            <ul>
-                <li>Ce logement ne peut constituer la résidence principale du locataire</li>
-                <li>Aucune aide au logement (APL/ALS) ne peut être perçue</li>
-                <li>La taxe d'habitation reste à charge du locataire</li>
-                <li>Le présent contrat est régi par le Code civil et non par la loi du 6 juillet 1989</li>
-            </ul>
         </div>
 
         <div class="buttons">
@@ -587,6 +582,20 @@
 
     <script>
         let preneurCount = 1;
+        let signatureData = null;
+
+        function loadSignature(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    signatureData = e.target.result;
+                    document.getElementById('signature-image').src = signatureData;
+                    document.getElementById('signature-preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
         function addPreneur() {
             preneurCount++;
@@ -612,8 +621,8 @@
                     <input type="text" id="preneur${preneurCount}_lieu_naissance" placeholder="Ville">
                 </div>
                 <div class="form-group">
-                    <label>Résidence PRINCIPALE :</label>
-                    <textarea id="preneur${preneurCount}_adresse_principale" placeholder="Adresse complète de la résidence principale"></textarea>
+                    <label>Résidence :</label>
+                    <textarea id="preneur${preneurCount}_adresse_principale" placeholder="Adresse complète de la résidence"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -682,8 +691,9 @@
             }
         }
 
-        document.getElementById('date_debut').addEventListener('change', calculateEndDate);
-        document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
+        // Dates personnalisables - pas de calcul automatique
+        // document.getElementById('date_debut').addEventListener('change', calculateEndDate);
+        // document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
 
         // Initialiser la date du jour
         document.getElementById('date_signature').value = new Date().toISOString().split('T')[0];
@@ -744,7 +754,8 @@
                 animaux: document.querySelector('input[name="animaux"]:checked')?.value || '',
                 clauses_particulieres: document.getElementById('clauses_particulieres').value,
                 lieu_signature: document.getElementById('lieu_signature').value,
-                date_signature: document.getElementById('date_signature').value
+                date_signature: document.getElementById('date_signature').value,
+                bailleur_signature: signatureData
             };
             
             // Collecte des données de tous les preneurs
@@ -766,10 +777,8 @@
 
         function generateBailHTML(data) {
             return `
-                <h1>CONTRAT DE BAIL DE LOCATION MEUBLÉE</h1>
-                <h2>À TITRE DE RÉSIDENCE SECONDAIRE</h2>
-                <h3>(Articles 1708 et suivants du Code civil)</h3>
-                
+                <h1>BAIL DE LOCATION MEUBLÉ</h1>
+
                 <div class="section">
                     <div class="section-title">LE BAILLEUR</div>
                     <p><strong>Nom et prénom :</strong> ${data.bailleur_nom}</p>
@@ -784,12 +793,12 @@
                     <div class="section-title">${data.preneurs.length > 1 ? 'LES PRENEURS' : 'LE PRENEUR'}</div>
                     ${data.preneurs.map((preneur, index) => `
                         ${data.preneurs.length > 1 ? `<h4>Preneur ${index + 1} :</h4>` : ''}
-                        <p><strong>Nom et prénom :</strong> ${preneur.nom}</p>
-                        <p><strong>Né(e) le :</strong> ${formatDate(preneur.naissance)} <strong>à</strong> ${preneur.lieu_naissance}</p>
-                        <p><strong>Domicilié(e) à titre de RÉSIDENCE PRINCIPALE :</strong> ${preneur.adresse_principale}</p>
-                        <p><strong>Téléphone :</strong> ${preneur.tel}</p>
-                        <p><strong>Email :</strong> ${preneur.email}</p>
-                        <p><strong>Profession :</strong> ${preneur.profession}</p>
+                        ${preneur.nom ? `<p><strong>Nom et prénom :</strong> ${preneur.nom}</p>` : ''}
+                        ${preneur.naissance || preneur.lieu_naissance ? `<p><strong>Né(e) le :</strong> ${formatDate(preneur.naissance)} ${preneur.lieu_naissance ? `<strong>à</strong> ${preneur.lieu_naissance}` : ''}</p>` : ''}
+                        ${preneur.adresse_principale ? `<p><strong>Domicilié(e) :</strong> ${preneur.adresse_principale}</p>` : ''}
+                        ${preneur.tel ? `<p><strong>Téléphone :</strong> ${preneur.tel}</p>` : ''}
+                        ${preneur.email ? `<p><strong>Email :</strong> ${preneur.email}</p>` : ''}
+                        ${preneur.profession ? `<p><strong>Profession :</strong> ${preneur.profession}</p>` : ''}
                         ${index < data.preneurs.length - 1 ? '<hr style="margin: 20px 0; border-color: #ecf0f1;">' : ''}
                     `).join('')}
                     <p><em>Ci-après dénommé${data.preneurs.length > 1 ? 's collectivement' : ''} « le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} »</em></p>
@@ -798,8 +807,7 @@
 
                 <div class="section">
                     <div class="section-title">ARTICLE 1 - OBJET DU CONTRAT</div>
-                    <p>Le présent contrat a pour objet la location du logement meublé ci-après désigné, destiné à l'usage <strong>exclusif de résidence secondaire</strong> du${data.preneurs.length > 1 ? ' (des)' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''}, à l'exclusion de tout usage commercial, professionnel ou artisanal.</p>
-                    <p><strong>Le logement loué ne constitue pas et ne pourra pas constituer la résidence principale du${data.preneurs.length > 1 ? ' (des)' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''}.</strong></p>
+                    <p>Le présent contrat a pour objet la location du logement meublé ci-après désigné.</p>
                 </div>
 
                 <div class="section">
@@ -814,10 +822,10 @@
 
                 <div class="section">
                     <div class="section-title">ARTICLE 4 - DURÉE DU BAIL</div>
-                    <p>Le présent bail est conclu pour une durée de <strong>${data.duree_bail}</strong>, à compter du <strong>${formatDate(data.date_debut)}</strong> et prenant fin le <strong>${formatDate(data.date_fin)}</strong>.</p>
-                    ${data.duree_type === 'determine' ? 
+                    <p>Le présent bail est conclu ${data.duree_bail ? `pour une durée de <strong>${data.duree_bail}</strong>, ` : ''}${data.date_debut ? `à compter du <strong>${formatDate(data.date_debut)}</strong>` : ''}${data.date_fin ? ` et prenant fin le <strong>${formatDate(data.date_fin)}</strong>` : ''}.</p>
+                    ${data.duree_type === 'determine' ?
                         '<p>À l\'expiration de cette période, le bail prendra fin de plein droit sans qu\'il soit besoin de congé, sauf accord express des parties pour un renouvellement.</p>' :
-                        '<p>À défaut de congé donné par l\'une ou l\'autre des parties dans les conditions prévues au présent bail, celui-ci sera reconduit tacitement.</p>'
+                        data.duree_type === 'reconductible' ? '<p>À défaut de congé donné par l\'une ou l\'autre des parties dans les conditions prévues au présent bail, celui-ci sera reconduit tacitement.</p>' : ''
                     }
                 </div>
 
@@ -832,8 +840,11 @@
 
                 <div class="section">
                     <div class="section-title">ARTICLE 6 - DÉPÔT DE GARANTIE</div>
-                    <p>Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} verse${data.preneurs.length > 1 ? 'nt' : ''} au Bailleur, lors de la signature du présent bail, un dépôt de garantie d'un montant de <strong>${data.depot_garantie} €</strong> destiné à garantir l'exécution des obligations locatives.</p>
-                    <p>Ce dépôt sera restitué dans un délai de deux mois suivant la remise des clés, déduction faite le cas échéant des sommes dues au Bailleur et des réparations locatives nécessaires.</p>
+                    ${!data.depot_garantie || parseFloat(data.depot_garantie) === 0 ?
+                        '<p>Il n\'y a pas de dépôt de garantie pour le présent bail.</p>' :
+                        `<p>Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} verse${data.preneurs.length > 1 ? 'nt' : ''} au Bailleur, lors de la signature du présent bail, un dépôt de garantie d'un montant de <strong>${data.depot_garantie} €</strong> destiné à garantir l'exécution des obligations locatives.</p>
+                        <p>Ce dépôt sera restitué dans un délai de deux mois suivant la remise des clés, déduction faite le cas échéant des sommes dues au Bailleur et des réparations locatives nécessaires.</p>`
+                    }
                 </div>
 
                 <div class="section">
@@ -851,8 +862,8 @@
                     `<div class="section"><div class="section-title">CLAUSES DIVERSES - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
                 }
 
-                ${data.clauses_particulieres ? 
-                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><p>${data.clauses_particulieres}</p></div>` : ''
+                ${data.clauses_particulieres ?
+                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><div style="border: 2px solid #2c3e50; padding: 15px; border-radius: 5px; background-color: #f8f9fa; white-space: pre-wrap;">${data.clauses_particulieres}</div></div>` : ''
                 }
 
                 <div class="signatures">
@@ -860,7 +871,9 @@
                         <strong>LE BAILLEUR</strong><br>
                         <em>Lu et approuvé</em><br>
                         <em>Bon pour accord</em>
-                        <div class="signature-line"></div>
+                        <div class="signature-line">
+                            ${data.bailleur_signature ? `<img src="${data.bailleur_signature}" style="max-width: 150px; max-height: 80px; margin-top: 10px;">` : ''}
+                        </div>
                     </div>
                     <div class="signature-box">
                         <strong>LE${data.preneurs.length > 1 ? 'S' : ''} PRENEUR${data.preneurs.length > 1 ? 'S' : ''}</strong><br>
@@ -978,7 +991,14 @@
                     });
                 }
             }
-            
+
+            // Charger la signature si elle existe
+            if (data.bailleur_signature) {
+                signatureData = data.bailleur_signature;
+                document.getElementById('signature-image').src = signatureData;
+                document.getElementById('signature-preview').style.display = 'block';
+            }
+
             // Recalculer le total
             calculateTotal();
         }
