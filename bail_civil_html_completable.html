@@ -822,10 +822,10 @@
 
                 <div class="section">
                     <div class="section-title">ARTICLE 4 - DURÉE DU BAIL</div>
-                    <p>Le présent bail est conclu pour une durée de <strong>${data.duree_bail}</strong>, à compter du <strong>${formatDate(data.date_debut)}</strong> et prenant fin le <strong>${formatDate(data.date_fin)}</strong>.</p>
-                    ${data.duree_type === 'determine' ? 
+                    <p>Le présent bail est conclu ${data.duree_bail ? `pour une durée de <strong>${data.duree_bail}</strong>, ` : ''}${data.date_debut ? `à compter du <strong>${formatDate(data.date_debut)}</strong>` : ''}${data.date_fin ? ` et prenant fin le <strong>${formatDate(data.date_fin)}</strong>` : ''}.</p>
+                    ${data.duree_type === 'determine' ?
                         '<p>À l\'expiration de cette période, le bail prendra fin de plein droit sans qu\'il soit besoin de congé, sauf accord express des parties pour un renouvellement.</p>' :
-                        '<p>À défaut de congé donné par l\'une ou l\'autre des parties dans les conditions prévues au présent bail, celui-ci sera reconduit tacitement.</p>'
+                        data.duree_type === 'reconductible' ? '<p>À défaut de congé donné par l\'une ou l\'autre des parties dans les conditions prévues au présent bail, celui-ci sera reconduit tacitement.</p>' : ''
                     }
                 </div>
 
