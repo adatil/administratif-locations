@@ -557,6 +557,13 @@
                         <input type="date" id="date_signature">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Signature numérisée du bailleur (optionnel) :</label>
+                    <input type="file" id="bailleur_signature" accept="image/*" onchange="loadSignature(event)">
+                </div>
+                <div id="signature-preview" style="margin-top: 10px; display: none;">
+                    <img id="signature-image" style="max-width: 200px; max-height: 100px; border: 1px solid #ccc; padding: 5px;">
+                </div>
             </div>
         </div>
 
@@ -575,6 +582,20 @@
 
     <script>
         let preneurCount = 1;
+        let signatureData = null;
+
+        function loadSignature(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    signatureData = e.target.result;
+                    document.getElementById('signature-image').src = signatureData;
+                    document.getElementById('signature-preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
         function addPreneur() {
             preneurCount++;
@@ -733,7 +754,8 @@
                 animaux: document.querySelector('input[name="animaux"]:checked')?.value || '',
                 clauses_particulieres: document.getElementById('clauses_particulieres').value,
                 lieu_signature: document.getElementById('lieu_signature').value,
-                date_signature: document.getElementById('date_signature').value
+                date_signature: document.getElementById('date_signature').value,
+                bailleur_signature: signatureData
             };
             
             // Collecte des données de tous les preneurs
@@ -846,7 +868,9 @@
                         <strong>LE BAILLEUR</strong><br>
                         <em>Lu et approuvé</em><br>
                         <em>Bon pour accord</em>
-                        <div class="signature-line"></div>
+                        <div class="signature-line">
+                            ${data.bailleur_signature ? `<img src="${data.bailleur_signature}" style="max-width: 150px; max-height: 80px; margin-top: 10px;">` : ''}
+                        </div>
                     </div>
                     <div class="signature-box">
                         <strong>LE${data.preneurs.length > 1 ? 'S' : ''} PRENEUR${data.preneurs.length > 1 ? 'S' : ''}</strong><br>
@@ -964,7 +988,14 @@
                     });
                 }
             }
-            
+
+            // Charger la signature si elle existe
+            if (data.bailleur_signature) {
+                signatureData = data.bailleur_signature;
+                document.getElementById('signature-image').src = signatureData;
+                document.getElementById('signature-preview').style.display = 'block';
+            }
+
             // Recalculer le total
             calculateTotal();
         }
