@@ -672,8 +672,9 @@
             }
         }
 
-        document.getElementById('date_debut').addEventListener('change', calculateEndDate);
-        document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
+        // Dates personnalisables - pas de calcul automatique
+        // document.getElementById('date_debut').addEventListener('change', calculateEndDate);
+        // document.getElementById('duree_bail').addEventListener('change', calculateEndDate);
 
         // Initialiser la date du jour
         document.getElementById('date_signature').value = new Date().toISOString().split('T')[0];
@@ -841,8 +842,8 @@
                     `<div class="section"><div class="section-title">CLAUSES DIVERSES - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
                 }
 
-                ${data.clauses_particulieres ? 
-                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><p>${data.clauses_particulieres}</p></div>` : ''
+                ${data.clauses_particulieres ?
+                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><div style="border: 2px solid #2c3e50; padding: 15px; border-radius: 5px; background-color: #f8f9fa; white-space: pre-wrap;">${data.clauses_particulieres}</div></div>` : ''
                 }
 
                 <div class="signatures">
