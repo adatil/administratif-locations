@@ -777,8 +777,6 @@
 
         function generateBailHTML(data) {
             return `
-                <h1>BAIL DE LOCATION MEUBLÉ</h1>
-
                 <div class="section">
                     <div class="section-title">LE BAILLEUR</div>
                     <p><strong>Nom et prénom :</strong> ${data.bailleur_nom}</p>
@@ -821,7 +819,7 @@
                 </div>
 
                 <div class="section">
-                    <div class="section-title">ARTICLE 4 - DURÉE DU BAIL</div>
+                    <div class="section-title">ARTICLE 3 - DURÉE DU BAIL</div>
                     <p>Le présent bail est conclu ${data.duree_bail ? `pour une durée de <strong>${data.duree_bail}</strong>, ` : ''}${data.date_debut ? `à compter du <strong>${formatDate(data.date_debut)}</strong>` : ''}${data.date_fin ? ` et prenant fin le <strong>${formatDate(data.date_fin)}</strong>` : ''}.</p>
                     ${data.duree_type === 'determine' ?
                         '<p>À l\'expiration de cette période, le bail prendra fin de plein droit sans qu\'il soit besoin de congé, sauf accord express des parties pour un renouvellement.</p>' :
@@ -830,7 +828,7 @@
                 </div>
 
                 <div class="section">
-                    <div class="section-title">ARTICLE 5 - LOYER ET CHARGES</div>
+                    <div class="section-title">ARTICLE 4 - LOYER ET CHARGES</div>
                     <p><strong>Loyer mensuel :</strong> ${data.loyer_mensuel} € (${numberToWords(data.loyer_mensuel)} euros)</p>
                     <p><strong>Charges forfaitaires :</strong> ${data.charges} € (${numberToWords(data.charges)} euros)</p>
                     ${data.charges_detail ? `<p><em>Les charges forfaitaires comprennent : ${data.charges_detail}</em></p>` : ''}
@@ -839,7 +837,7 @@
                 </div>
 
                 <div class="section">
-                    <div class="section-title">ARTICLE 6 - DÉPÔT DE GARANTIE</div>
+                    <div class="section-title">ARTICLE 5 - DÉPÔT DE GARANTIE</div>
                     ${!data.depot_garantie || parseFloat(data.depot_garantie) === 0 ?
                         '<p>Il n\'y a pas de dépôt de garantie pour le présent bail.</p>' :
                         `<p>Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} verse${data.preneurs.length > 1 ? 'nt' : ''} au Bailleur, lors de la signature du présent bail, un dépôt de garantie d'un montant de <strong>${data.depot_garantie} €</strong> destiné à garantir l'exécution des obligations locatives.</p>
@@ -847,23 +845,23 @@
                     }
                 </div>
 
-                <div class="section">
-                    <div class="section-title">ARTICLE 11 - RÉSILIATION DU BAIL</div>
-                    <p><strong>11.1 - Résiliation par le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} :</strong> Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} peut (peuvent) résilier le bail à tout moment en respectant un préavis de ${data.preavis_preneur} par lettre recommandée avec accusé de réception.</p>
-                    <p><strong>11.2 - Résiliation par le Bailleur :</strong> Le Bailleur peut donner congé pour la fin du bail en respectant un préavis de ${data.preavis_bailleur} par lettre recommandée avec accusé de réception.</p>
-                </div>
-
-                ${data.sous_location === 'interdite' ? 
-                    '<div class="section"><div class="section-title">ARTICLE 10 - SOUS-LOCATION</div><p>La sous-location et la cession du présent bail sont formellement interdites.</p></div>' :
-                    '<div class="section"><div class="section-title">ARTICLE 10 - SOUS-LOCATION</div><p>La sous-location est autorisée sous réserve de l\'accord écrit préalable du Bailleur.</p></div>'
+                ${data.sous_location === 'interdite' ?
+                    '<div class="section"><div class="section-title">ARTICLE 6 - SOUS-LOCATION</div><p>La sous-location et la cession du présent bail sont formellement interdites.</p></div>' :
+                    data.sous_location === 'autorisee' ? '<div class="section"><div class="section-title">ARTICLE 6 - SOUS-LOCATION</div><p>La sous-location est autorisée sous réserve de l\'accord écrit préalable du Bailleur.</p></div>' : ''
                 }
 
-                ${data.animaux ? 
-                    `<div class="section"><div class="section-title">CLAUSES DIVERSES - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
+                <div class="section">
+                    <div class="section-title">ARTICLE 7 - RÉSILIATION DU BAIL</div>
+                    <p><strong>7.1 - Résiliation par le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} :</strong> Le${data.preneurs.length > 1 ? 's' : ''} Preneur${data.preneurs.length > 1 ? 's' : ''} peut (peuvent) résilier le bail à tout moment en respectant un préavis de ${data.preavis_preneur} par lettre recommandée avec accusé de réception.</p>
+                    <p><strong>7.2 - Résiliation par le Bailleur :</strong> Le Bailleur peut donner congé pour la fin du bail en respectant un préavis de ${data.preavis_bailleur} par lettre recommandée avec accusé de réception.</p>
+                </div>
+
+                ${data.animaux ?
+                    `<div class="section"><div class="section-title">ARTICLE 8 - ANIMAUX</div><p>Animaux : ${getAnimauxText(data.animaux)}</p></div>` : ''
                 }
 
                 ${data.clauses_particulieres ?
-                    `<div class="section"><div class="section-title">CLAUSES PARTICULIÈRES</div><div style="border: 2px solid #2c3e50; padding: 15px; border-radius: 5px; background-color: #f8f9fa; white-space: pre-wrap;">${data.clauses_particulieres}</div></div>` : ''
+                    `<div class="section"><div class="section-title">ARTICLE 9 - CLAUSES PARTICULIÈRES</div><div style="border: 2px solid #2c3e50; padding: 15px; border-radius: 5px; background-color: #f8f9fa; white-space: pre-wrap;">${data.clauses_particulieres}</div></div>` : ''
                 }
 
                 <div class="signatures">
